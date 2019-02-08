@@ -17,3 +17,14 @@ def build(ctx):
         target=ctx.path_to(ctx, 'OUT_DATA', 'matchday_df.csv'),
         name='get_scrapable_leagues'
     )
+
+    ctx(
+        features='run_py_script',
+        source='scrape_games.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA', 'matchday_df.csv')
+        ],
+        # How to implement csv from loop in here?
+        target=ctx.path_to(ctx, 'OUT_DATA', 'matchday_checker.csv'),
+        name='scrape_games'
+    )
