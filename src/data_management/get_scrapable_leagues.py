@@ -5,12 +5,10 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from bld.project_paths import project_paths_join as ppj
 
-
 def get_soup_obj(url):
     page_request = http.request("GET", url)
     soup = BeautifulSoup(page_request.data, 'lxml')
     return soup
-
 
 def get_kreise_list(region, main_url, matchday_dict):
     region_url = main_url + "/" + region
@@ -25,7 +23,6 @@ def get_kreise_list(region, main_url, matchday_dict):
     kreise_url_list = [x for x in kreise_url_list if not "profi" in x]
     kreise_url_list.remove(region_url)
     return kreise_url_list
-
 
 def get_league_list(kreis_url, matchday_dict):
     kreis_soup = get_soup_obj(kreis_url)
@@ -45,7 +42,6 @@ def get_league_list(kreis_url, matchday_dict):
     leagues_url_list = [x for x in leagues_url_list if not any(
         strng in x for strng in exclsn_strngs)]
     return leagues_url_list
-
 
 def get_seaons_list(league_url, matchday_dict):
     league_soup = get_soup_obj(league_url)
@@ -67,7 +63,6 @@ def get_seaons_list(league_url, matchday_dict):
     seasons_list = seasons_list.findAll("a")
     return seasons_list
 
-
 def get_matchday_url(season, matchday_dict, matchday_df):
     season_identifier = re.sub('/', '_', season.text)
 
@@ -76,9 +71,12 @@ def get_matchday_url(season, matchday_dict, matchday_df):
     if "html" in season["href"]:
         mtchdy_season_url = season["href"].replace(
             ".html", "/spielplan.html")
+        matchday_dict["current_season"] = 0
     else:
         mtchdy_season_url = season["href"] + "/spielplan"
+        matchday_dict["current_season"] = 1
 
+    matchday_dict["done"] = 0
     matchday_dict["season"] = season_identifier
     matchday_dict["matchday_url"] = mtchdy_season_url
     matchday_dict["ID"] = "_".join([matchday_dict["region"], matchday_dict[
@@ -86,8 +84,7 @@ def get_matchday_url(season, matchday_dict, matchday_df):
 
     matchday_df = matchday_df.append(
         matchday_dict, ignore_index=True)
-    return matchday_df
-    
+    return matchday_df   
 
 if __name__ == '__main__':
     http = urllib3.PoolManager(
