@@ -10,3 +10,10 @@ def build(ctx):
         target=ctx.path_to(ctx, 'OUT_DATA', 'initial_locations.csv'),
         name='get_simulation_draws'
     )
+
+    ctx(
+        features='run_py_script',
+        source='get_scrapable_leagues.py',
+        target=ctx.path_to(ctx, 'OUT_DATA', 'matchday_df.csv'),
+        name='get_scrapable_leagues'
+    )
