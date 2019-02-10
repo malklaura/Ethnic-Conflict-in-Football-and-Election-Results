@@ -3,9 +3,7 @@ import urllib3
 import pandas as pd
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-import os
-
-os.chdir("C:/Users/maxim/Documents/master_eco/effective_programming")
+from bld.project_paths import project_paths_join as ppj
 
 def get_elections_soup(municipality_url):
     municipality_page = http.request("GET", municipality_url)
@@ -142,28 +140,29 @@ def run_scrapping(municipality_url, votes_df):
             pass
     return votes_df
 
-http = urllib3.PoolManager(
-    cert_reqs='CERT_REQUIRED',
-    ca_certs=certifi.where())
+if __name__ == '__main__':
+    http = urllib3.PoolManager(
+        cert_reqs='CERT_REQUIRED',
+        ca_certs=certifi.where())
 
-# Read in municipality_df.
-municipality_df = pd.read_csv(
-    "municipality_df.csv", encoding='cp1252')
+    # Read in municipality_df.
+    municipality_df = pd.read_csv(
+        "municipality_df.csv", encoding='cp1252')
 
-# Run web scraping device only on scrappable municipalities as defined in get_mun.py
-scrappable_municipalities = municipality_df[
-    municipality_df["scrappable"] == 1]["href"].tolist()
-# Just for faster computation in this phase 
-scrappable_municipalities = scrappable_municipalities[0:10]
+    # Run web scraping device only on scrappable municipalities as defined in get_mun.py
+    scrappable_municipalities = municipality_df[
+        municipality_df["scrappable"] == 1]["href"].tolist()
+    # Just for faster computation in this phase 
+    scrappable_municipalities = scrappable_municipalities[0:10]
 
-# Start scraping process.
-votes_df = pd.DataFrame()
-votes_dict = dict()
+    # Start scraping process.
+    votes_df = pd.DataFrame()
+    votes_dict = dict()
 
-for municipality_url in tqdm(scrappable_municipalities):
-    try:
-    	votes_df = run_scrapping(municipality_url, votes_df)
-    except:
-    	pass
+    for municipality_url in tqdm(scrappable_municipalities):
+        try:
+        	votes_df = run_scrapping(municipality_url, votes_df)
+        except:
+        	pass
 
-votes_df.to_csv("votes_df.csv")
+    votes_df.to_csv("votes_df.csv")
