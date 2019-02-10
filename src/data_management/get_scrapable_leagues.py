@@ -16,12 +16,12 @@ def get_soup_obj(url):
 
 
 def get_district_list(region, main_url, matchday_dict):
-	"""Given a region name and the main url this function finds all
-	districts within the region and constructs the corresponding url,
-	which in turn contain information about the leagues within the
-	district. Region name and url are stored in a matchday dict, that
-	is later appended to a dataframe containing all leagues across
-	all regions."""
+    """Given a region name and the main url this function finds all
+    districts within the region and constructs the corresponding url,
+    which in turn contain information about the leagues within the
+    district. Region name and url are stored in a matchday dict, that
+    is later appended to a dataframe containing all leagues across
+    all regions."""
 
     # Get soup object from predefined regions.
     region_url = main_url + "/" + region
@@ -43,7 +43,7 @@ def get_district_list(region, main_url, matchday_dict):
 
 
 def get_league_list(district_url, matchday_dict):
-	"""Given an url this function returns the soup object, i.e., it gets 
+    """Given an url this function returns the soup object, i.e., it gets 
     the page request and pulls the data out of HTML code, needed to 
     start the actual web scraping process."""
     district_soup = get_soup_obj(district_url)
@@ -66,10 +66,10 @@ def get_league_list(district_url, matchday_dict):
 
 
 def get_seaons_list(league_url, matchday_dict):
-	"""Given a league url this function returns a list, containing the
-	url of all past seasons of this league. League name and url are
-	stored in the matchday dictionary."""
-    
+    """Given a league url this function returns a list, containing the
+    url of all past seasons of this league. League name and url are
+    stored in the matchday dictionary."""
+
     # Get soup object for given league url.
     league_soup = get_soup_obj(league_url)
 
@@ -97,7 +97,7 @@ def get_matchday_url(season, matchday_dict, matchday_df):
     Further it saves information about the season in the matchday
     dictionary, while also constructing an unqiue ID for each season.
     """
-    
+
     # Maybe just do this in the end for the ID string?
     season_name = re.sub('/', '_', season.text)
 
