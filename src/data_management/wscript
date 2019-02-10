@@ -13,6 +13,23 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
+        source='get_scrapable_mun.py',
+        target=ctx.path_to(ctx, 'OUT_DATA', 'mun_df.csv'),
+        name='get_scrapable_mun'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='get_votes_df.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA', 'mun_df.csv')
+        ],
+        target=ctx.path_to(ctx, 'OUT_DATA', 'votes_df.csv'),
+        name='get_votes_df'
+    )
+
+    ctx(
+        features='run_py_script',
         source='get_scrapable_leagues.py',
         target=ctx.path_to(ctx, 'OUT_DATA', 'matchday_df.csv'),
         name='get_scrapable_leagues'
