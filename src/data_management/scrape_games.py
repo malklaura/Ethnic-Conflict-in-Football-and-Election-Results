@@ -16,13 +16,13 @@ def get_soup_obj(url):
 
 matchday_checker = pd.read_csv(
     ppj("OUT_DATA", "matchday_df.csv"), encoding='cp1252')
-matchday_urls = matchday_df["matchday_url"]
+matchday_urls = matchday_checker["matchday_url"]
 
 for i, matchday_url in enumerate(matchday_urls):
     matchday_soup = get_soup_obj(matchday_url)
     games = matchday_soup.findAll("td", {"class": "liga_spielplan_container"})
 
-    file_name = matchday_df.loc[i, "ID"]
+    file_name = matchday_checker.loc[i, "ID"]
 
     if not os.path.isfile(ppj("OUT_DATA", "{}.csv".format(file_name))):
 
