@@ -28,14 +28,24 @@ def build(ctx):
         name='get_votes_df'
     )
 
+    votes_df = pd.read_csv(
+        ppj("OUT_DATA", "votes_df.csv"), encoding='cp1252')
+
+    target_list = []
+    for file_name in votes_df["ID"].tolist():
+        new_target = "ctx.path_to(ctx, 'OUT_DATA', {}.csv)".format(file_name)
+        target_list.append(new_target)
+
+    target_list = ",".join(target_list)
+
     ctx(
         features='run_py_script',
         source='download_voting_files.py',
         deps=[
             ctx.path_to(ctx, 'OUT_DATA', 'votes_df.csv')
         ],
-        target=ctx.path_to(ctx, 'OUT_DATA', ''),
-        name='get_votes_df'
+        target= [target_list],
+        name='download_voting_files'
     )
 
     ctx(
