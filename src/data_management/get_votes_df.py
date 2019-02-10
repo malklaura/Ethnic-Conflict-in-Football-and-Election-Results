@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 from bld.project_paths import project_paths_join as ppj
 
+
 def get_elections_soup(municipality_url):
     municipality_page = http.request("GET", municipality_url)
     page_soup = BeautifulSoup(municipality_page.data, 'lxml')
@@ -15,7 +16,8 @@ def get_elections_soup(municipality_url):
 def get_export_url(level_soup, election_url):
     export_soup = level_soup.find_all("ul", {"class": "dropdown-menu"})[-1]
     export_href = export_soup.find_all("a")[-1]["href"]
-    votes_dict["export_url"] = election_url.rsplit('/', 1)[0] + '/' + export_href
+    votes_dict["export_url"] = election_url.rsplit(
+        '/', 1)[0] + '/' + export_href
 
 
 def get_voting_level(poss_election, election_url):
@@ -121,6 +123,7 @@ def fill_votes_dict(votes_dict, zweitstimmen_url, level, election_abbrev, munici
 
     return votes_dict
 
+
 def run_scrapping(municipality_url, votes_df):
     elections_soup = get_elections_soup(municipality_url)
 
@@ -128,14 +131,15 @@ def run_scrapping(municipality_url, votes_df):
         election_date, election_type_str = get_election_type_str(election)
 
         if any(word in election_type_str for word in ["Bundestag", "Landtag", "Europa"]):
-            election_url, poss_elections = get_poss_elections(municipality_url, election)
-            
+            election_url, poss_elections = get_poss_elections(
+                municipality_url, election)
+
             votes_df = bundestag_check(
-	            election_type_str, poss_elections, votes_df, election_url, election_date, municipality_url)
+                election_type_str, poss_elections, votes_df, election_url, election_date, municipality_url)
             votes_df = landtag_check(
-	            election_type_str, poss_elections, votes_df, election_url, election_date, municipality_url)
+                election_type_str, poss_elections, votes_df, election_url, election_date, municipality_url)
             votes_df = europawahl_check(
-	            election_type_str, poss_elections, votes_df, election_url, election_date, municipality_url)
+                election_type_str, poss_elections, votes_df, election_url, election_date, municipality_url)
         else:
             pass
     return votes_df
@@ -147,12 +151,13 @@ if __name__ == '__main__':
 
     # Read in municipality_df.
     municipality_df = pd.read_csv(
-        "municipality_df.csv", encoding='cp1252')
+        ppj("OUT_DATA", "mun_df.csv"), encoding='cp1252')
 
-    # Run web scraping device only on scrappable municipalities as defined in get_mun.py
+    # Run web scraping device only on scrappable municipalities as defined in
+    # get_mun.py
     scrappable_municipalities = municipality_df[
         municipality_df["scrappable"] == 1]["href"].tolist()
-    # Just for faster computation in this phase 
+    # Just for faster computation in this phase
     scrappable_municipalities = scrappable_municipalities[0:10]
 
     # Start scraping process.
@@ -161,8 +166,8 @@ if __name__ == '__main__':
 
     for municipality_url in tqdm(scrappable_municipalities):
         try:
-        	votes_df = run_scrapping(municipality_url, votes_df)
+            votes_df = run_scrapping(municipality_url, votes_df)
         except:
-        	pass
+            pass
 
-    votes_df.to_csv("votes_df.csv")
+    votes_df.to_csv(ppj("OUT_DATA", "votes_df.csv"))
