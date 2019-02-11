@@ -21,3 +21,15 @@ def build(ctx):
             append=model,
             name='schelling_{}'.format(model)
         )
+
+    ctx(
+        features='run_py_script',
+        source='merge_voting_df.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA', 'mun_df.csv'),
+            ctx.path_to(ctx, 'OUT_DATA', 'votes_df.csv')
+        ],
+        target=ctx.path_to(ctx, 'OUT_DATA', 'combined_votes_df.csv'),
+        append=model,
+        name='merge_voting_df'
+    )
