@@ -106,6 +106,7 @@ def run_scrapping(mun_url, elec_df, elec_type_dict):
     """Run web scraping process over all scrapable municipalities. In the end 
     a dataframe containing all download urls is returned for those elections
     of interest."""
+    elec_dict["mun_url"] = mun_url
     elec_soup = get_elections_soup(mun_url)
 
     for elec in elec_soup:
@@ -125,7 +126,7 @@ if __name__ == '__main__':
     elec_mun_df = pd.read_csv(
         ppj("OUT_DATA_ELEC", "election_mun.csv"), encoding='cp1252')
 
-    scrapable_mun = elec_mun_df[elec_mun_df["scrapable"] == 1]["href"].tolist()[
+    scrapable_mun = elec_mun_df[elec_mun_df["scrapable"] == 1]["elec_page"].tolist()[
         0:10]
 
     bw_dict = {"srch_trm": "Bundestag", "class": "Zweitstimmen",

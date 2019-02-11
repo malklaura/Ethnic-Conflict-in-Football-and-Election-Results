@@ -4,8 +4,8 @@ from bld.project_paths import project_paths_join as ppj
 
 
 def get_srch_term_list(elec_comb_df):
-	"""This functions returns a list containing all search terms needed for the 
-	subsequent google search."""
+    """This functions returns a list containing all search terms needed for the
+    subsequent google search."""
     exclusion_dict = {"Briefwahl": None, "Wahlbezirk": None,
                       "Stimmbezirk": None, "Briefwahlbezirk": None, "Wahlbez": None}
 
@@ -15,7 +15,7 @@ def get_srch_term_list(elec_comb_df):
         exclusion_dict, regex=True, inplace=True)
     srch_term_list = elec_comb_df["srch_term"].unique().tolist()[0:10]
     srch_term_list = [x for x in srch_term_list if x is not None]
-    return srch_term_list
+    return srch_term_list[0:10]
 
 
 if __name__ == '__main__':
@@ -42,6 +42,6 @@ if __name__ == '__main__':
         elec_off_df = elec_off_df.append(elec_off_dict, ignore_index=True)
 
     # Merge latitude and longitude data to combined election dataframe.
-    elec_final_df = pd.merge(elec_comb_df, elec_off_df,  how='left', left_on=[
-                             'elec_off_srch_term'], right_on=['srch_term'])
+    elec_final_df = pd.merge(elec_comb_df, elec_off_df,
+                             how='left', on=['srch_term'])
     elec_final_df.to_csv(ppj("OUT_DATA_ELEC", "election_final.csv"))

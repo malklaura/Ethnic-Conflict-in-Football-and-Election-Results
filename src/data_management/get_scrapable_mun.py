@@ -67,7 +67,7 @@ def run_scraping(driver):
 
     # Idnetiefy scrapable municipalties by substing in url.
     key_indicators = ["://votemanager.", "://wahlen."]
-    elec_mun_df["scrapable"] = elec_mun_df["url"].apply(
+    elec_mun_df["scrapable"] = elec_mun_df["elec_page"].apply(
         lambda x: 1 if any(key in x for key in key_indicators) else 0)
     return elec_mun_df
 
