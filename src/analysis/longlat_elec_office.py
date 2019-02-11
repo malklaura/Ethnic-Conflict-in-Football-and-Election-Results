@@ -4,6 +4,8 @@ from bld.project_paths import project_paths_join as ppj
 
 
 def get_srch_term_list(elec_comb_df):
+	"""This functions returns a list containing all search terms needed for the 
+	subsequent google search."""
     exclusion_dict = {"Briefwahl": None, "Wahlbezirk": None,
                       "Stimmbezirk": None, "Briefwahlbezirk": None, "Wahlbez": None}
 
@@ -19,7 +21,7 @@ def get_srch_term_list(elec_comb_df):
 if __name__ == '__main__':
     # Read in combined election csv.
     elec_comb_df = pd.read_csv(
-        ppj("OUT_DATA", "election_combined.csv"), encoding='cp1252')
+        ppj("OUT_DATA_ELEC", "election_combined.csv"), encoding='cp1252')
 
     # Initialize pandas dataframe and dictionary to store coordinates.
     elec_off_df = pd.DataFrame()
@@ -42,4 +44,4 @@ if __name__ == '__main__':
     # Merge latitude and longitude data to combined election dataframe.
     elec_final_df = pd.merge(elec_comb_df, elec_off_df,  how='left', left_on=[
                              'elec_off_srch_term'], right_on=['srch_term'])
-    elec_final_df.to_csv(ppj("OUT_DATA", "election_final.csv"))
+    elec_final_df.to_csv(ppj("OUT_DATA_ELEC", "election_final.csv"))
