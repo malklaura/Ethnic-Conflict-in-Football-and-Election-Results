@@ -123,7 +123,7 @@ def run_scrapping(mun_url, elec_df, elec_type_dict):
 if __name__ == '__main__':
     # Read in municipality_df.
     elec_mun_df = pd.read_csv(
-        ppj("OUT_DATA", "election_mun.csv"), encoding='cp1252')
+        ppj("OUT_DATA_ELEC", "election_mun.csv"), encoding='cp1252')
 
     scrapable_mun = elec_mun_df[elec_mun_df["scrapable"] == 1]["href"].tolist()[
         0:10]
@@ -150,4 +150,4 @@ if __name__ == '__main__':
             pass
 
     # Save election dataframe to .csv.
-    elec_df.to_csv(ppj("OUT_DATA", "election_urls.csv"))
+    elec_df.to_csv(ppj("OUT_DATA_ELEC", "election_urls.csv"))
