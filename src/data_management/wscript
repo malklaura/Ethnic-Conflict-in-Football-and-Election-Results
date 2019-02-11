@@ -30,6 +30,17 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
+        source='merge_voting_df.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_urls.csv')
+        ],
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_master.csv'),
+        name='merge_voting_df'
+    )
+
+    ctx(
+        features='run_py_script',
         source='download_voting_files.py',
         deps=[
             ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_master.csv')
@@ -39,6 +50,16 @@ def build(ctx):
             ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_combined.csv')
         ],
         name='download_voting_files'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='longlat_elec_office.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_combined.csv'),
+        ],
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_final.csv'),
+        name='longlat_elec_office'
     )
 
     # ctx(
