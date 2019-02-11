@@ -14,7 +14,7 @@ def build(ctx):
     ctx(
         features='run_py_script',
         source='get_scrapable_mun.py',
-        target=ctx.path_to(ctx, 'OUT_DATA', 'mun_df.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA', 'elec_pages.csv'),
         name='get_scrapable_mun'
     )
 
@@ -22,29 +22,32 @@ def build(ctx):
         features='run_py_script',
         source='get_votes_df.py',
         deps=[
-            ctx.path_to(ctx, 'OUT_DATA', 'mun_df.csv')
+            ctx.path_to(ctx, 'OUT_DATA', 'elec_pages.csv')
         ],
-        target=ctx.path_to(ctx, 'OUT_DATA', 'votes_df.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA', 'elec_details.csv'),
         name='get_votes_df'
     )
 
-    votes_df = pd.read_csv(
-        ppj("OUT_DATA", "votes_df.csv"), encoding='cp1252')
+    #import pandas as pd
+    #from bld.project_paths import project_paths_join as ppj
+    #votes_df = pd.read_csv(
+    #   ppj("OUT_DATA", "votes_df.csv"), encoding='cp1252')
 
-    target_list = []
-    for file_name in votes_df["ID"].tolist():
-        new_target = "ctx.path_to(ctx, 'OUT_DATA', {}.csv)".format(file_name)
-        target_list.append(new_target)
+    #target_list = []
+    #for file_name in votes_df["ID"].tolist():
+    #    new_target = "ctx.path_to(ctx, 'OUT_DATA', {}.csv)".format(file_name)
+    #    target_list.append(new_target)
 
-    target_list = ",".join(target_list)
+    #target_list = ",".join(target_list)
 
     ctx(
         features='run_py_script',
         source='download_voting_files.py',
         deps=[
-            ctx.path_to(ctx, 'OUT_DATA', 'votes_df.csv')
+            ctx.path_to(ctx, 'OUT_DATA', 'elec_details.csv'),
+            ctx.path_to(ctx, 'OUT_DATA', 'elec_pages.csv')
         ],
-        target= [target_list],
+        target=ctx.path_to(ctx, 'OUT_DATA', 'Aachen_BW_24.09.2017.csv'),
         name='download_voting_files'
     )
 
