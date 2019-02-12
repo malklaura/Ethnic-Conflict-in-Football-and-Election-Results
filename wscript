@@ -23,6 +23,8 @@ def set_project_paths(ctx):
     pp["OUT_DATA"] = f"{out}/out/data"
     pp["OUT_DATA_ELEC"] = f"{out}/out/data/election_files"
     pp["OUT_DATA_ELEC_CSV"] = f"{out}/out/data/election_files/download_csv"
+    pp["OUT_DATA_SOCCER"] = f"{out}/out/data/soccer_files"
+    pp["OUT_DATA_SOCCER_CSV"] = f"{out}/out/data/soccer_files/csv_files"
     pp["OUT_ANALYSIS"] = f"{out}/out/analysis"
     pp["OUT_FINAL"] = f"{out}/out/final"
     pp["OUT_FIGURES"] = f"{out}/out/figures"
