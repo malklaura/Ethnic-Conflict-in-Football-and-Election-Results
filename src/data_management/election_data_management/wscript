@@ -1,0 +1,55 @@
+#! python
+
+
+def build(ctx):
+
+    ctx(
+        features='run_py_script',
+        source='get_scrapable_mun.py',
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
+        name='get_scrapable_mun'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='get_dwnld_urls.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv')
+        ],
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_urls.csv'),
+        name='get_votes_df'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='merge_election_files.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_urls.csv')
+        ],
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_master.csv'),
+        name='merge_voting_df'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='dwnld_election_files.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_master.csv')
+        ],
+        target=[
+            ctx.path_to(ctx, 'OUT_DATA_ELEC_CSV', 'Aachen_BW_24.09.2017.csv'),
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_combined.csv')
+        ],
+        name='download_voting_files'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='get_longlat_coords.py',
+        deps=[
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_combined.csv'),
+        ],
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_final.csv'),
+        name='longlat_elec_office'
+    )

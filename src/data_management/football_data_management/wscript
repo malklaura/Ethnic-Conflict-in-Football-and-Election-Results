@@ -1,0 +1,22 @@
+#! python
+
+
+def build(ctx):
+
+    ctx(
+        features='run_py_script',
+        source='get_scrapable_leagues.py',
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'matchday_df.csv'),
+        name='get_scrapable_leagues'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='scrape_games.py',
+        deps=[
+         ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'matchday_df.csv')
+        ],
+        # How to implement csv from loop in here?
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'matchday_checker.csv'),
+        name='scrape_games'
+    )
