@@ -2,26 +2,35 @@ import geocoder
 import pandas as pd
 from bld.project_paths import project_paths_join as ppj
 
-# Open merged games file
-merged_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "football_final.csv"), encoding='cp1252')
+if __name__ == '__main__':
+	# Open final football file csv.
+	final_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "football_final.csv"), encoding='cp1252')
 
-unique_clubs = merged_df["home_club"].unique().tolist() + merged_df["away_club"].unique().tolist()
-unique_clubs = list(set(unique_clubs))[1:]
+	# Get unique set of clubs, consisting of both home and away teams. 
+	unique_clubs = final_df["hmsd_club"].unique().tolist() + final_df["awsd_club"].unique().tolist()
+	unique_clubs = list(set(unique_clubs))[1:]
 
-clubs_longlat_df = pd.DataFrame()
+	# Create dataframe to store unqiue club - longlat data.
+	club_longlat_df = pd.DataFrame()
 
-clubs_longlat_df["club"] = unique_clubs
+	# Do the google API search by name.
+	api_key = "AIzaSyCfFTBllwpO1fIkKbUvduBDyo_WXXxAFZE"
 
-# Do the google analysis
-for i, club in enumerate(unique_clubs):
-    geo = geocoder.google(club, key = "AIzaSyCfFTBllwpO1fIkKbUvduBDyo_WXXxAFZE")
-    try:
-        clubs_longlat_df.at[i, "lat"] = geo.latlng[0]
-        clubs_longlat_df.at[i, "long"] = geo.latlng[1]
-    except:
-        print(club)
+	for club in unique_clubs[0:10]:
+		club_dict["club"] = club
+	    geo = geocoder.google(club, key = api_key)
+	    try:
+	        club_dict["lat"] = geo.latlng[0]
+	        club_dict["long"] = geo.latlng[1]
+	    except:
+	        print(club)
 
-merged_df = pd.merge(merged_df, clubs_longlat_df,  how='left',
-                              left_on=['home_club'], right_on=['club'])
+	    club_longlat_df = club_longlat_df.append(
+	        club_dict, ignore_index=True)
 
-merged_df.to_csv(ppj("OUT_DATA_FOOTBALL", "football_final.csv"))
+	club_longlat_df.to_csv(ppi("OUT_DATA_FOOTBALL", "club_longlat.csv"))
+
+	# merged_df = pd.merge(final_df, clubs_longlat_df,  how='left',
+	#                               left_on=['home_club'], right_on=['club'])
+
+	# merged_df.to_csv(ppj("OUT_DATA_FOOTBALL", "football_final_longlat.csv"))
