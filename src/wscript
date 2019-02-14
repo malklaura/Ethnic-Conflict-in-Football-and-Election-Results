@@ -4,6 +4,8 @@
 def build(ctx):
     ctx.recurse('library')
     ctx.recurse('data_management')
+    ctx.recurse('data_management/election_data_management')
+    ctx.recurse('data_management/football_data_management')
     ctx.recurse('analysis')
     ctx.recurse('final')
     # Safety measure -- else the LaTeX scanner might fail because some

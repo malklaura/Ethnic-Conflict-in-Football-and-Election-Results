@@ -114,15 +114,21 @@ def get_matchday_url(season, matchday_dict, matchday_df):
     # Store further information about league in matchday dictionary.
     matchday_dict["done"] = 0
     matchday_dict["season"] = season_name
-    matchday_dict["matchday_url"] = mtchdy_season_url
+    matchday_dict["mtchdy_url"] = mtchdy_season_url
     # Construct unique ID for each season by combining information from 
     # all four stages of scraping process.
     matchday_dict["ID"] = "_".join([matchday_dict["region"], matchday_dict[
                                    "district"], matchday_dict["league"], matchday_dict["season"]])
 
+    # Chnage umlaute to english grammar.
+    umlaute_dict = {"ä": "ae", "Ä": "Ae", "ö": "oe",
+                    "Ö": "Oe", "ü": "ue", "Ü": "Ue", "ß": "ss"}
+
     # Append dictionary to matchday dataframe.
     matchday_df = matchday_df.append(
         matchday_dict, ignore_index=True)
+    matchday_df.replace(umlaute_dict, regex=True, inplace=True)
+
     return matchday_df
 
 if __name__ == '__main__':
@@ -162,4 +168,4 @@ if __name__ == '__main__':
                         season, matchday_dict, matchday_df)
 
     # Save matchday dataframe as .csv file.
-    matchday_df.to_csv(ppj("OUT_DATA", "matchday_df.csv"))
+    matchday_df.to_csv(ppj("OUT_DATA_FOOTBALL", "matchday_data.csv"))
