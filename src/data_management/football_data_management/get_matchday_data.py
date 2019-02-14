@@ -1,68 +1,44 @@
 import datetime
-import os.path
 import urllib3
 import certifi
+import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 from bld.project_paths import project_paths_join as ppj
-
-http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-
 
 def get_soup_obj(url):
     page_request = http.request("GET", url)
     soup = BeautifulSoup(page_request.data, 'lxml')
     return soup
 
-matchday_checker = pd.read_csv(
-    ppj("OUT_DATA", "matchday_df.csv"), encoding='cp1252')
-matchday_urls = matchday_checker["matchday_url"]
+http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
-for i, matchday_url in enumerate(matchday_urls):
-    matchday_soup = get_soup_obj(matchday_url)
+league_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "matchday_data.csv"), encoding='cp1252')
+league_url_list = league_df["mtchdy_url"].tolist()[0:5]
+
+for i, url in enumerate(league_url_list):
+    
+    matchday_df = pd.DataFrame()
+    file_name = league_df.loc[i, "ID"]
+    
+    matchday_soup = get_soup_obj(url)
     games = matchday_soup.findAll("td", {"class": "liga_spielplan_container"})
 
-    file_name = matchday_checker.loc[i, "ID"]
+    for j, game in enumerate(games):
 
-    if not os.path.isfile(ppj("OUT_DATA", "{}.csv".format(file_name))):
+        game_dict = {}
 
-        matchday_df = pd.DataFrame()
+        game_dict["game_url"] = game.a["href"]
+        if game.find("div", {"liga_spieltag_vorschau_datum_content_ergebnis"}) != None:
+            game_dict["doable"] = 1
+            game_dict["reason"] = np.nan
+        elif game.find("div", {"class": "liga_spieltag_vorschau_datum_content"}) != None:
+            game_dict["doable"] = 0
+            game_dict["reason"] = game.find("div", {"class": "liga_spieltag_vorschau_datum_content"}).text
+        else:
+            game_dict["doable"] = 0
+            game_dict["reason"] = "unknown"
 
-        for j, game in enumerate(games):
+        matchday_df = matchday_df.append(game_dict, ignore_index=True)
 
-            game_dict = dict()
-
-            game_dict["href"] = game.a["href"]
-            if game.find("div", {"liga_spieltag_vorschau_datum_content_ergebnis"}) != None:
-                game_dict["doable"] = 1
-                #matchdays_df.at[i, "date"] = datetime.datetime.now()
-            elif game.find("div", {"class": "liga_spieltag_vorschau_datum_content"}) != None:
-                if game.find("div", {"class": "liga_spieltag_vorschau_datum_content"}).text == 'abg.':
-                    game_dict["doable"] = 1
-                    game_dict["abgesagt"] = 1
-                elif game.find("div", {"class": "liga_spieltag_vorschau_datum_content"}).text == 'abbr.':
-                    game_dict["doable"] = 1
-                    game_dict["abbruch"] = 1
-                else:
-                    game_dict["doable"] = 0
-                    try:
-                        game_dict["date"] = datetime.datetime.strptime(game.find(
-                            "div", {"class": "liga_spieltag_vorschau_datum_content"}).text + str(2019), '%d.%m.%Y')
-                    except ValueError:
-                        game_dict["note"] = "check date manually"
-            elif game.find("div", {"class", "liga_spieltag_vorschau_datum "}).text == '\nabbr.\n':
-                game_dict["doable"] = 1
-                game_dict["abbruch"] = 1
-            else:
-                print(i)
-
-            matchday_df = matchday_df.append(game_dict, ignore_index=True)
-
-        matchday_df.to_csv(ppj("OUT_DATA", "{}.csv".format(file_name)))
-
-        matchday_checker.loc[j, "done"] = 1
-
-    else:
-        pass
-
-matchday_checker.to_csv(ppj("OUT_DATA", "matchday_checker.csv"))
+    matchday_df.to_csv(ppj("OUT_DATA_FOOTBALL_MTCHDAY", "{}.csv".format(file_name)))
