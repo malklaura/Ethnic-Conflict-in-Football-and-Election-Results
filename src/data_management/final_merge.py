@@ -10,7 +10,7 @@ from geopy.distance import geodesic
 from datetime import datetime
 from bld.project_paths import project_paths_join as ppj
 
-def get_geo_distance():
+def get_geo_distance(final_df):
 	elec_longlat = final_df[["elec_long", "elec_lat"]]
 	hmsd_longlat = final_df[["hmsd_long", "hmsd_lat"]]
 	final_df["geo_dist"] = [geodesic(final_df.loc[x, ["hmsd_long", "hmsd_lat"]], final_df.loc[x, ["elec_long", "elec_lat"]]).km for x in range(len(final_df))]
@@ -41,4 +41,4 @@ if __name__ == '__main__':
 	final_df = final_df[final_df["drop"] != 1]
 	final_df = final_df.groupby(['elec_id', 'elec_date']).mean()
 
-    final_df.to_csv(ppj("OUT_DATA", "master_file.csv"))
+    final_df.to_csv(ppj("OUT_DATA", "master_file.csv"), index=False)
