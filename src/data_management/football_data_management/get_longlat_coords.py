@@ -2,7 +2,7 @@ import geocoder
 import pandas as pd
 from bld.project_paths import project_paths_join as ppj
 
-def get_geodata(club_longlat_df, unique_clubs)
+def get_geodata(club_longlat_df, unique_clubs):
 	# Do the google API search by name.
 	api_key = "AIzaSyCfFTBllwpO1fIkKbUvduBDyo_WXXxAFZE"
 
@@ -23,6 +23,8 @@ def get_geodata(club_longlat_df, unique_clubs)
 		club_longlat_df = club_longlat_df.append(
 		    club_dict, ignore_index=True)
 
+	return club_longlat_df
+
 
 if __name__ == '__main__':
 	# Open final football file csv.
@@ -42,5 +44,5 @@ if __name__ == '__main__':
 
 	merged_df = pd.merge(final_df, club_longlat_df,  how='left', on='hmsd_club')
 
-	club_longlat_df.to_csv(ppj("OUT_DATA_FOOTBALL", "club_longlat.csv"))
-	merged_df.to_csv(ppj("OUT_DATA_FOOTBALL", "football_final_longlat.csv"))
+	club_longlat_df.to_csv(ppj("OUT_DATA_FOOTBALL", "club_longlat.csv"), index=False)
+	merged_df.to_csv(ppj("OUT_DATA_FOOTBALL", "football_final_longlat.csv"), index=False)
