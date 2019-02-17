@@ -16,7 +16,7 @@ def combine_voting_files(colnames_list):
         writer = csv.DictWriter(file_out, fieldnames=colnames_list)
         writer.writeheader()
         for filename in inputs:
-            with open(filename, "r", newline="") as file_in:
+            with open(ppj("OUT_DATA_ELEC_CSV", filename), "r", newline="") as file_in:
                 reader = csv.DictReader(file_in)
                 for line in reader:
                     writer.writerow(line)
