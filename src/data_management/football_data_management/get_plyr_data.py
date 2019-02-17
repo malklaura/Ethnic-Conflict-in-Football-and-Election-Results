@@ -102,4 +102,4 @@ if __name__ == '__main__':
             plyr_dict, ignore_index=True)
 
     # Save player url, age and nationality in seperate csv file.
-    plyr_df.to_csv(ppj("OUT_DATA_FOOTBALL", "player_data.csv"))
+    plyr_df.to_csv(ppj("OUT_DATA_FOOTBALL", "player_data.csv"), index=False)
