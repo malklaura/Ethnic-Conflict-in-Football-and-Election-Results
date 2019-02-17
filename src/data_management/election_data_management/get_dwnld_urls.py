@@ -129,6 +129,7 @@ if __name__ == '__main__':
     scrapable_mun = elec_mun_df[elec_mun_df["scrapable"] == 1]["elec_page"].tolist()[
         0:10]
 
+    # Dictionary with relevant information for all considered elections.
     bw_dict = {"srch_trm": "Bundestag", "class": "Zweitstimmen",
                "level": "Wahlbezirk", "abbrev": "BW"}
     lw_dict = {"srch_trm": "Landtag", "class": "Zweitstimmen",
@@ -136,6 +137,7 @@ if __name__ == '__main__':
     ew_dict = {"srch_trm": "Europa", "class": "Europa",
                "level": "Wahlbezirk", "abbrev": "EW"}
 
+    # Store all dictionaries in an election type dictionary.
     elec_type_dict = {"Bundestagswahl": bw_dict,
                       "Landtagswahl": lw_dict,
                       "Europawahl": ew_dict}
@@ -147,8 +149,12 @@ if __name__ == '__main__':
     for mun_url in tqdm(scrapable_mun):
         try:
             elec_df = run_scrapping(mun_url, elec_df, elec_type_dict)
+
+            # Get seperate columns for day, month and year form date column.
+            date_format = '(?P<elec_day>[^.]+).(?P<elec_month>[^.]+).(?P<elec_year>[^.]+)'
+            elec_df = pd.concat([elec_df, elec_df["elec_date"].str.extract(date_format).astype(int)], axis=1)
         except:
             pass
 
     # Save election dataframe to .csv.
-    elec_df.to_csv(ppj("OUT_DATA_ELEC", "election_urls.csv"))
+    elec_df.to_csv(ppj("OUT_DATA_ELEC", "election_urls.csv"), index=False)
