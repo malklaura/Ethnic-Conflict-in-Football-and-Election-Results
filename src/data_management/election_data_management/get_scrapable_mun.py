@@ -52,7 +52,8 @@ def run_scraping(driver):
     while True:
         soup, mun_soup = get_mun_soup(driver)
 
-        # Loop through all municipalities on a site.
+        # Loop through all municipalities on a site. For now only utilize
+        # municipalities from NRW.
         for mun in mun_soup:
             if mun.find_all("td")[2].text == "Nordrhein-Westfalen":
                 elec_mun_df = fill_mun_dict(mun, elec_mun_df)
@@ -72,7 +73,7 @@ def run_scraping(driver):
     return elec_mun_df
 
 if __name__ == '__main__':
-    # Needed to work with htpps sites.
+    # Needed to work with https sites.
     http = urllib3.PoolManager(
         cert_reqs='CERT_REQUIRED',
         ca_certs=certifi.where())
