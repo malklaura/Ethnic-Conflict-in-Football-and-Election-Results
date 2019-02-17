@@ -39,6 +39,11 @@ if __name__ == '__main__':
         elec_off_dict["srch_term"] = srch_term
         elec_off_dict["lat"] = geo.latlng[0]
         elec_off_dict["long"] = geo.latlng[1]
+        try:
+            elec_off_dict["postal"] = geo.postal
+            elec_off_dict["locality"] = geo.locality
+        except:
+            pass
         elec_off_df = elec_off_df.append(elec_off_dict, ignore_index=True)
 
     # Merge latitude and longitude data to combined election dataframe.
