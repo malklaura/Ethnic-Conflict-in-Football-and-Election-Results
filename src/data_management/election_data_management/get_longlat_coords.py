@@ -36,17 +36,23 @@ if __name__ == '__main__':
     # Get coordinates for search term.
     for srch_term in srch_term_list:
         geo = geocoder.google(srch_term, key=key)
+
+        # Store longitude, latitude, zip code and locality in
+        # prespecified dictionary.
         elec_off_dict["srch_term"] = srch_term
-        elec_off_dict["lat"] = geo.latlng[0]
-        elec_off_dict["long"] = geo.latlng[1]
+        elec_off_dict["elec_lat"] = geo.latlng[0]
+        elec_off_dict["elec_long"] = geo.latlng[1]
         try:
-            elec_off_dict["postal"] = geo.postal
-            elec_off_dict["locality"] = geo.locality
+            elec_off_dict["elec_postal"] = geo.postal
+            elec_off_dict["elec_locality"] = geo.locality
         except:
             pass
+
+        # Append dictionary to dataframe.
         elec_off_df = elec_off_df.append(elec_off_dict, ignore_index=True)
 
     # Merge latitude and longitude data to combined election dataframe.
     elec_final_df = pd.merge(elec_comb_df, elec_off_df,
-                             how='left', on=['srch_term'])
-    elec_final_df.to_csv(ppj("OUT_DATA_ELEC", "election_final.csv"))
+                             how='left', on='srch_term')
+    elec_final_df.to_csv(
+        ppj("OUT_DATA_ELEC", "election_final.csv"), index=False)
