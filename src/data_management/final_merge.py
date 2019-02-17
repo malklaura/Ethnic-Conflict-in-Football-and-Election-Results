@@ -12,8 +12,8 @@ def get_geo_distance(final_df, index):
     # Compute geographic distance in kilometers using geopy package if possible
     # otherwise return np.nan.
     try:
-    	fb_coords = final_df.loc[index, ["hmsd_long", "hmsd_lat"]]
-    	elec_coords = final_df.loc[index, ["elec_long", "elec_lat"]]
+        fb_coords = final_df.loc[index, ["hmsd_long", "hmsd_lat"]]
+        elec_coords = final_df.loc[index, ["elec_long", "elec_lat"]]
         return geodesic(fb_coords, elec_coords).km
     except:
         return np.nan
@@ -53,14 +53,10 @@ if __name__ == '__main__':
         final_df, x) for x in range(len(final_df))]
     final_df["time_dist"] = get_time_distance(final_df)
 
-    # Indicate those matches that are within 20km and no longer apart than two
-    # weeks
-    final_df[final_df["geo_dist"] > 20]["drop"] = 1
-    final_df[final_df["time_dist"] > 14 |
-             final_df["time_dist"] < 0]["drop"] = 1
-
-    # Drop those rows.
-    final_df = final_df[final_df["drop"] != 1]
+    # Drop those matches that are within 20km and no longer apart than two
+    # weeks.
+    final_df = final_df[final_df["geo_dist"] < 20]
+    final_df = final_df[final_df["time_dist"].between(0, 14, inclusive=True)]
 
     # Group by election id and date, which results in the final dataframe.
     final_df = final_df.groupby(['elec_id', 'elec_date']).mean()
