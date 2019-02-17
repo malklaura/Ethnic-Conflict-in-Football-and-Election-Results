@@ -14,20 +14,20 @@ def get_unique_plyrs(game_df):
 
     # Get columns containining individual player urls from homeside and
     # awayside teams.
-    filter_col = [col for col in game_df if f'{col[0]}{col[-1]}'.lower() == 'hmsd_plyr_url'][1:]
-    filter_col += [col for col in game_df if f'{col[0]}{col[-1]}'.lower() == 'awsd_plyr_url'][1:]
+    filter_col = [col for col in game_df if '_plyr_url' in col]
 
     # Only keep unique player urls.
     unique_plyrs = []
     for col in filter_col:
-        unique_plyrs += game_df[col].unique_plyrs().tolist()
+        unique_plyrs += game_df[col].tolist()
 
     unique_plyrs = list(set(unique_plyrs))[1:]
 
     return unique_plyrs
 
 
-def get_age_nat_data(plyr_soup, plyr_dict):
+
+def get_age_nat(plyr_soup, plyr_dict):
     # Find "td" object containing relevant information.
     info_soup = plyr_soup.find("td", {"class": "stammdaten"})
 
