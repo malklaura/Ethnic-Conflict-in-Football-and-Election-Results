@@ -9,7 +9,8 @@ from bld.project_paths import project_paths_join as ppj
 def combine_voting_files(colnames_list):
     """This function combines all voting csv files into a single
     csv file by using a predefined list of all occuring columns."""
-    inputs = [i for i in glob.glob(ppj("OUT_DATA_ELEC_CSV", "*.{}".format('csv')))]
+    inputs = [i for i in glob.glob(
+        ppj("OUT_DATA_ELEC_CSV", "*.{}".format('csv')))]
 
     # Write all csv files line by line to the new combined csv file.
     with open(ppj("OUT_DATA_ELEC", "election_combined.csv"), "w", newline="") as file_out:
@@ -36,32 +37,42 @@ def expand_voting_files(elec_master_df):
 
     colnames_list = [""]
     for i, export_url in enumerate(dwnld_url_list):
+        # Download respective csv file and store it in seperate folder
+        # according to previously defined id name.
+        file_name = elec_master_df.loc[i, "ID"]
         urlretrieve(export_url, ppj(
-            "OUT_DATA_ELEC_CSV", '{}.csv'.format(elec_master_df.loc[i, "ID"])))
+            "OUT_DATA_ELEC_CSV", '{}.csv'.format(file_name)))
+
+        # Merge identifying variables to newly downloaded csv files.
         temp_df = pd.read_csv(ppj("OUT_DATA_ELEC_CSV", "{}.csv".format(
             elec_master_df.loc[i, "ID"])), encoding='cp1252', sep=";")
-        # poastal im missing here
+
         temp_df["ID"] = elec_master_df.loc[i, "ID"]
         temp_df["mun_name"] = elec_master_df.loc[i, "mun_clearname"]
-        #temp_df["voting_level"] = elec_master_df.loc[i, "voting_level"]
         temp_df["state"] = elec_master_df.loc[i, "state"]
+        temp_df["elec_year"] = elec_master_df.loc[i, "elec_year"]
+        temp_df["elec_date"] = elec_master_df.loc[i, "elec_date"]
+
+        # Overwrite original csv file with with expanded columns.
         temp_df.to_csv(
-            ppj("OUT_DATA_ELEC_CSV", '{}.csv'.format(elec_master_df.loc[i, "ID"])))
+            ppj("OUT_DATA_ELEC_CSV", '{}.csv'.format(file_name)))
 
-        # Get columns of temp_df and append to overall columns list.
+        # Get columns of temp_df and append those to overall columns list if
+        # not already in there.
         temp_columns = list(temp_df)
-
         for columns in temp_columns:
             if columns not in colnames_list:
                 colnames_list.append(columns)
+
     return colnames_list
 
 if __name__ == '__main__':
-    elec_master_df = pd.read_csv(ppj("OUT_DATA_ELEC", "election_master.csv"), encoding='cp1252')
+    elec_master_df = pd.read_csv(
+        ppj("OUT_DATA_ELEC", "election_master.csv"), encoding='cp1252')
 
     colnames_list = expand_voting_files(elec_master_df)
 
     # Load all csv files from csv voting folder.
     out_csv = combine_voting_files(colnames_list)
 
-    out_csv.to_csv(ppj("OUT_DATA_ELEC", "election_combined.csv"))
+    out_csv.to_csv(ppj("OUT_DATA_ELEC", "election_combined.csv"), index=False)
