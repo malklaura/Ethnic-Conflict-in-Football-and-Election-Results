@@ -55,3 +55,6 @@ if __name__ == '__main__':
 
         matchday_df.to_csv(ppj("OUT_DATA_FOOTBALL_MTCHDAY",
                                "{}.csv".format(file_name)), index=False)
+
+    open(ppj("OUT_DATA_FOOTBALL_MTCHDAY", "mtchday_scraping_finished.txt"), 'a').close()
+

@@ -16,22 +16,22 @@ def build(ctx):
         deps=[
             ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'matchday_data.csv')
         ],
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_MTCHDAY', 'mittelrhein_koeln_regionalliga_west_18_19.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_MTCHDAY', 'mtchday_scraping_finished.txt'),
         name='get_matchday_data'
     )
 
     ctx(
         features='run_py_script',
         source='get_game_data.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_MTCHDAY', 'mittelrhein_koeln_regionalliga_west_18_19.csv'),
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_FINAL', 'mittelrhein_koeln_regionalliga_west_18_19.csv'),
+        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_MTCHDAY', 'mtchday_scraping_finished.txt'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_FINAL', 'game_scraping_finished.txt'),
         name='get_game_data'
     )
 
     ctx(
         features='run_py_script',
         source='merge_game_files.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_FINAL', 'mittelrhein_koeln_regionalliga_west_18_19.csv'),
+        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_FINAL', 'game_scraping_finished.txt'),
         target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_final.csv'),
         name='merge_game_files'
     )
