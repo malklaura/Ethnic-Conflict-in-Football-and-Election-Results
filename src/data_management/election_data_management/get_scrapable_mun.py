@@ -7,15 +7,18 @@ from bs4 import BeautifulSoup
 from bld.project_paths import project_paths_join as ppj
 
 
-def load_webdriver(url, sec):
+def load_webdriver(webdriver_path, url, delay):
     """This functions loads the firefox webdriver for a prespecified 
     url. The sec argument generates some delay to ensure that the 
     driver is properly loaded before further code is run."""
-    driver = webdriver.Firefox(
-        executable_path=r"C:/Users/maxim/Documents/master_eco/eco/geckodriver.exe")
+    
+    # Lod webdriver with specified url.
+    driver = webdriver.Firefox(executable_path=webdriver_path)
     driver.get(url)
+
     # Use some delay, since webdriver needs some time to load.
-    time.sleep(sec)
+    time.sleep(delay)
+
     return driver
 
 
@@ -79,8 +82,9 @@ if __name__ == '__main__':
         ca_certs=certifi.where())
 
     # Open Firefox driver and open votemanager site.
+    webdriver_path = r"C:/Users/maxim/Documents/master_eco/eco/geckodriver.exe"
     votemanger_url = "http://wahlen.votemanager.de"
-    driver = load_webdriver(votemanger_url, 5)
+    driver = load_webdriver(webdriver_path, votemanger_url, 5)
 
     # Run scraping process, afterwards store resulting dataframe.
     elec_mun_df = run_scraping(driver)
