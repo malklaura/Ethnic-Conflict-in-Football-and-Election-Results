@@ -12,7 +12,7 @@ def get_geo_distance(final_df, index):
     # Compute geographic distance in kilometers using geopy package if possible
     # otherwise return np.nan.
     try:
-        fb_coords = final_df.loc[index, ["hmsd_long", "hmsd_lat"]]
+        fb_coords = final_df.loc[index, ["home_long", "home_lat"]]
         elec_coords = final_df.loc[index, ["elec_long", "elec_lat"]]
         return geodesic(fb_coords, elec_coords).km
     except:
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     # Merge dataframes according to postal code and year column.
     final_df = pd.merge(election_df, football_df, left_on=[
-                        "elec_postal", "elec_year"], right_on=["hmsd_postal", "fb_year"])
+                        "elec_postal", "elec_year"], right_on=["home_postal", "fb_year"])
 
     # Compute kilometer between election office and homeside football court as well as time disrance
     # between election and game date for all merged rows.
