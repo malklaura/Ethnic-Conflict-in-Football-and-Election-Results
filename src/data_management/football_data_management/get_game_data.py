@@ -12,69 +12,51 @@ def get_card_data(soup, game_dict):
     """This function returns cards for both the home- and awaytime from a 
     soup object and writes those information in the according matchday 
     dataframe. I record card color, player name, and minute of foul."""
-    try:
-        # Find container with card information.
-        cards_soup = soup.find(
-            "table", {"class": "content_table_std spielerstrafen"})
-        cards_soup = cards_soup.find_all("td", {"valign": "top"})
-        hmsd_cards = cards_soup[0].findAll("div", {"class": "tn_item"})
-        awsd_cards = cards_soup[1].findAll("div", {"class": "tn_item"})
-
-        minmax = min(max(len(hmsd_cards), len(awsd_cards)), 11)
+    
+    # Find container with card information.
+    cards_soup = soup.find(
+        "table", {"class": "content_table_std spielerstrafen"})
+    cards_soup = cards_soup.find_all("td", {"valign": "top"})
+    
+    for i, team in enumerate(["home", "away"]):
+        # Get cards soup for every team.
+        team_cards = cards_soup[i].findAll("div", {"class": "tn_item"})
+        
+        # Initalize values for card counting.
+        game_dict["{}_card_yllw".format(team)] = 0
+        game_dict["{}_card_red".format(team)] = 0
+        
+        # Loop through all cards of respective team. 
+        minmax = min(len(team_cards), 11)
         for j in range(minmax):
             try:
-                player = hmsd_cards[j].a.text
-                minute = hmsd_cards[j].find(
+                # Get player name and minute of card.
+                player = team_cards[j].a.text
+                minute = team_cards[j].find(
                     "span", {"class": "klammerzahl"}).text[:-1]
 
-                game_dict["hmsd_card_plyr_" + str(j)] = player
-                game_dict["hmsd_card_min_" + str(j)] = minute
+                game_dict["{}_card_plyr_{}".format(team, j)] = player
+                game_dict["{}_card_min_{}".format(team, j)] = int(minute)
 
-                # Scraping of card colors.
-                if hmsd_cards[j].div["style"] == "color:#FBDB04;":
-                    game_dict["hmsd_card_clr_" + str(j)] = 1  # yellow = 1
-                    game_dict["hmsd_card_yllw"] += 1
-                elif hmsd_cards[j].div["style"] == "color:#D7110C;":
-                    game_dict["hmsd_card_clr_" + str(j)] = 2  # red = 2
-                    game_dict["hmsd_card_red"] += 1
-                elif hmsd_cards[j].div["class"][0] == "icon_gelbrot":
-                    # yellow / red = 3
-                    game_dict["hmsd_card_clr_" + str(j)] = 3
-                    # counted as two yellow cards
-                    game_dict["hmsd_card_yllw"] += 1
+                # Scrape card colors and contiuously count cards.
+                if team_cards[j].div["style"] == "color:#FBDB04;":
+                    game_dict["{}_card_clr_{}".format(team, j)] = 1  # yellow = 1
+                    game_dict["{}_card_yllw".format(team)] += 1
+                    
+                elif team_cards[j].div["style"] == "color:#D7110C;":
+                    game_dict["{}_card_clr_{}".format(team, j)] = 2  # red = 2
+                    game_dict["{}_card_red".format(team)] += 1
+                    
+                elif team_cards[j].div["class"][0] == "icon_gelbrot":
+                    game_dict["{}_card_clr_{}".format(team, j)] = 3 # yellow / red = 3
+                    game_dict["{}_card_yllw".format(team)] += 2 # count as two yellow cards
+                    
                 else:
-                    game_dict["hmsd_card_clr_" + str(j)] = np.nan
+                    game_dict["{}_card_clr_{}".format(team, j)] = np.nan
+                    
             except:
                 pass
-
-            try:
-                player = awsd_cards[j].a.text
-                minute = awsd_cards[j].find(
-                    "span", {"class": "klammerzahl"}).text[:-1]
-
-                game_dict["awsd_card_plyr_" + str(j)] = player
-                game_dict["awsd_card_min_" + str(j)] = minute
-
-                # Scraping of card colors.
-                if hmsd_cards[j].div["style"] == "color:#FBDB04;":
-                    game_dict["awsd_card_clr_" + str(j)] = 1  # yellow = 1
-                    game_dict["awsd_card_yllw"] += 1
-                elif hmsd_cards[j].div["style"] == "color:#D7110C;":
-                    game_dict["awsd_card_clr_" + str(j)] = 2  # red = 2
-                    game_dict["awsd_card_red"] += 1
-                elif hmsd_cards[j].div["class"][0] == "icon_gelbrot":
-                    # yellow / red = 3
-                    game_dict["awsd_card_clr_" + str(j)] = 3
-                    # counted as two yellow cards
-                    game_dict["awsd_card_yllw"] += 1
-                else:
-                    game_dict["awsd_card_clr_" + str(j)] = np.nan
-
-            except:
-                pass
-    except:
-        pass
-
+            
     return game_dict
 
 # def get_goal_data(soup, game_dict):
@@ -109,12 +91,12 @@ def get_card_data(soup, game_dict):
 #     the page request and pulls the data out of HTML code, needed to
 #     start the actual web scraping process."""
 #     try:
-#         coach_hmsd = soup.findAll(
+#         coach_home = soup.findAll(
 #             "div", {"class": "aufstellung_ausgabe_block homeside"})[2]
-#         game_dict["coach_hmsd"] = coach_hmsd.a.text
-#         coach_awsd = soup.findAll(
+#         game_dict["coach_home"] = coach_home.a.text
+#         coach_away = soup.findAll(
 #             "div", {"class": "aufstellung_ausgabe_block awayside"})[2]
-#         game_dict["coach_awsd"] = coach_awsd.a.text
+#         game_dict["coach_away"] = coach_away.a.text
 #     except:
 #         pass
 
@@ -126,32 +108,19 @@ def get_player_data(soup, game_dict):
     from a  soup object and writes those information in the according 
     matchday dataframe. Besides player names, also corresponding player
     urls are retrieved."""
-
-    try:
-        hmsd = soup.findAll(
-            "div", {"class": "aufstellung_ausgabe_block homeside"})[0]
-        plyrs_hmsd = hmsd.findAll("a", {"class": "spieler_linkurl"})
-    except:
-        pass
-
-    try:
-        awsd = soup.findAll(
-            "div", {"class": "aufstellung_ausgabe_block awayside"})[0]
-        plyrs_awsd = awsd.findAll("a", {"class": "spieler_linkurl"})
-    except:
-        pass
-
-    for j in range(11):
-        try:
-            game_dict["hmsd_plyr_" + str(j)] = plyrs_hmsd[j].text
-            game_dict["hmsd_plyr_url_" + str(j)] = plyrs_hmsd[j]["href"]
-        except:
-            pass
-        try:
-            game_dict["awsd_plyr_" + str(j)] = plyrs_awsd[j].text
-            game_dict["awsd_plyr_url_" + str(j)] = plyrs_awsd[j]["href"]
-        except:
-            pass
+    
+    # Loop through teams to store information by team.
+    for i, team in enumerate(["home", "away"]):
+        plyrs_soup = soup.findAll("div", {"class": "aufstellung_ausgabe_block {}side".format(team)})[0]
+        plyrs = plyrs_soup.findAll("a", {"class": "spieler_linkurl"})
+        
+        # Loop through players.
+        for j in range(min(len(plyrs), 11)):
+            try:
+                game_dict["{}_plyr_{}".format(team, j)] = plyrs[j].text
+                game_dict["{}_plyr_url_{}".format(team, j)] = plyrs[j]["href"]
+            except:
+                pass
 
     return game_dict
 
@@ -199,7 +168,7 @@ def get_game_data(soup, game_dict):
 
         # Loop through home- and awayside team to retrieve team name and url
         # as well as club name (teams are subdivisions within a club).
-        for j, team in enumerate(["hmsd_", "awsd_"]):
+        for j, team in enumerate(["home_", "away_"]):
             game_dict[team + "team"] = team_title[j].a["title"]
             game_dict[team + "team_url"] = team_title[j].a["href"]
             game_dict[team + "club"] = club_title[j]["title"]
@@ -214,7 +183,7 @@ def get_dict_keys():
     scraping process."""
     dict_keys = ["time", "date", "league",
                  "game_url", "referee", "result", "matchday"]
-    for team in ["hmsd", "awsd"]:
+    for team in ["home", "away"]:
         primary_keys = ["{0}_{1}".format(team, x) for x in [
             "club", "team_url", "team", "card_red", "card_yllw"]]
         dict_keys += primary_keys
@@ -286,3 +255,5 @@ if __name__ == '__main__':
         # Save as csv file.
         game_df.to_csv(ppj("OUT_DATA_FOOTBALL_FINAL",
                            "{}.csv".format(game_id)), index=False)
+
+    open(ppj("OUT_DATA_FOOTBALL_FINAL", "game_scraping_finished.txt"), 'a').close()
