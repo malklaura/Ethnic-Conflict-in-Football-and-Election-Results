@@ -1,9 +1,6 @@
 import certifi
 import urllib3
-import pandas as pd
 from bs4 import BeautifulSoup
-from tqdm import tqdm
-from bld.project_paths import project_paths_join as ppj
 
 
 def get_soup_object(url):
@@ -12,7 +9,6 @@ def get_soup_object(url):
         cert_reqs='CERT_REQUIRED',
         ca_certs=certifi.where()
     )
-
     page_request = http.request("GET", url)
     page_soup = BeautifulSoup(page_request.data, 'lxml')
     return page_soup
@@ -20,22 +16,23 @@ def get_soup_object(url):
 
 def get_elections_soup(mun_url):
     """This function returns a soup object containing all elections
-    contained in the municipality url."""
+    obejects contained in the municipality url."""
     page_soup = get_soup_object(mun_url)
     elections_soup = page_soup.find_all("tr")[1:]
     return elections_soup
 
 
-def get_elec_type_str(elec):
+def get_elec_type_str(elec, elec_dict):
     """This function returns the name of the considered election."""
     elec_date = elec.a.text
     elec_type_str = elec.text.strip().replace(elec_date, "")
 
+    # Write to dict.
     elec_dict["elec_date"] = elec_date
     return elec_type_str
 
 
-def get_pssbl_elections(elec):
+def get_pssbl_elections(elec, mun_url, elec_dict):
     """This function returns all elections that took place on a certain date.
     The need for this function arises from the fact, that more than one election
     can take place on the same day and that some elections have the possibility
@@ -49,9 +46,9 @@ def get_pssbl_elections(elec):
     return poss_elections
 
 
-def get_voting_lvl(poss_election):
+def get_voting_lvl(poss_election, elec_dict):
     """For each election data are available for different aggregation levels.
-    I am only interested in the lowest level."""
+    I am only interested in the lowest (Wahlbüro) level."""
     sublvl_href = poss_election.a["href"]
     sublvl_url = elec_dict["elec_url"].rsplit(
         '/', 1)[0] + '/' + sublvl_href
@@ -64,7 +61,7 @@ def get_voting_lvl(poss_election):
     return voting_lvl
 
 
-def get_dwnld_url(level, elec_abbrev):
+def get_dwnld_url(level, elec_abbrev, elec_dict):
     """This function returns the download url for a given voting level."""
     level_href = level["href"]
     if "Erststimmen" in level_href:
@@ -75,6 +72,7 @@ def get_dwnld_url(level, elec_abbrev):
         '/', 1)[0] + '/' + level_href
     level_soup = get_soup_object(level_url)
 
+    # Construct download url.
     dwnld_soup = level_soup.find_all("ul", {"class": "dropdown-menu"})[-1]
     dwnld_href = dwnld_soup.find_all("a")[-1]["href"]
     dwnld_url = elec_dict["elec_url"].rsplit(
@@ -86,55 +84,49 @@ def get_dwnld_url(level, elec_abbrev):
     return elec_dict
 
 
-def elec_type_check(elec_type_str, pssbl_elections, elec_type, elec_df):
+def elec_type_check(elec_type_dict, elec, mun_url, elec_dict, elec_dict_list):
     """This function checks, wheter a possible elections fulfills the requirements
     of the elections we want to download. The specific requirements are stored in 
     the elec_type dictionary."""
-    if elec_type["srch_trm"] in elec_type_str:
-        for poss_elec in pssbl_elections:
-            if all(word in poss_elec.script.get_text() for word in [elec_type["srch_trm"], elec_type["class"]]):
-                voting_lvl = get_voting_lvl(poss_elec)
 
+    # Get copy of election type dict.
+    temp_elec_type_dict = elec_type_dict
+    # Needed since there are occurrences of multiple elections on the same day.
+    pssbl_elections = get_pssbl_elections(elec, mun_url, elec_dict)
+    # Loop through all listed elections.
+    for poss_elec in pssbl_elections:
+        # Loop through election type dicts.
+        for key, elec_type in temp_elec_type_dict.copy().items():
+            # Check if possible election matches election type criteria.
+            if elec_type["srch_trm"] in poss_elec.script.get_text():
+                voting_lvl = get_voting_lvl(poss_elec, elec_dict)
                 for level in voting_lvl:
+                    # Get csv download url on election office (Wahlbuero)
+                    # level.
                     if elec_type["level"] in level.text:
-                        elec_dict = get_dwnld_url(level, elec_type["abbrev"])
-                        elec_df = elec_df.append(elec_dict, ignore_index=True)
-    return elec_df
+                        elec_dict = get_dwnld_url(
+                            level, elec_type["abbrev"], elec_dict)
+                        elec_dict_list.append(elec_dict)
+                        # Exclude used election type dict from further
+                        # consideration.
+                        del temp_elec_type_dict[key]
+            else:
+                pass
+
+    return elec_dict_list
 
 
-def run_scrapping(mun_url, elec_df, elec_type_dict):
+def run_scraping(mun_url):
     """Run web scraping process over all scrapable municipalities. In the end 
     a dataframe containing all download urls is returned for those elections
     of interest."""
-    elec_dict["mun_url"] = mun_url
-    elec_soup = get_elections_soup(mun_url)
-
-    for elec in elec_soup:
-        elec_type_str = get_elec_type_str(elec)
-        elections_of_interest = ["Bundestag", "Landtag", "Europa"]
-        if any(word in elec_type_str for word in elections_of_interest):
-            pssbl_elections = get_pssbl_elections(elec)
-
-            for elec_type in elec_type_dict.values():
-                elec_df = elec_type_check(
-                    elec_type_str, pssbl_elections, elec_type, elec_df)
-
-    return elec_df
-
-if __name__ == '__main__':
-    # Read in municipality_df.
-    elec_mun_df = pd.read_csv(
-        ppj("OUT_DATA_ELEC", "election_mun.csv"), encoding='cp1252')
-
-    scrapable_mun = elec_mun_df[elec_mun_df["scrapable"] == 1]["elec_page"].tolist()[
-        0:10]
 
     # Dictionary with relevant information for all considered elections.
-    bw_dict = {"srch_trm": "Bundestag", "class": "Zweitstimmen",
+    bw_dict = {"srch_trm": "Bundestag",
                "level": "Wahlbezirk", "abbrev": "BW"}
-    lw_dict = {"srch_trm": "Landtag", "class": "Zweitstimmen",
+    lw_dict = {"srch_trm": "Landtag",
                "level": "Stimmbezirk", "abbrev": "LW"}
-    ew_dict = {"srch_trm": "Europa", "class": "Europa",
+    ew_dict = {"srch_trm": "Europa",
                "level": "Wahlbezirk", "abbrev": "EW"}
 
     # Store all dictionaries in an election type dictionary.
@@ -142,19 +134,28 @@ if __name__ == '__main__':
                       "Landtagswahl": lw_dict,
                       "Europawahl": ew_dict}
 
-    # Start scraping process.
-    elec_df = pd.DataFrame()
-    elec_dict = {}
+    # Append all election dictionaries to this list
+    elec_dict_list = []
 
-    for mun_url in tqdm(scrapable_mun):
-        try:
-            elec_df = run_scrapping(mun_url, elec_df, elec_type_dict)
+    # First level.
+    try:
+        elec_soup = get_elections_soup(mun_url)
 
-            # Get seperate columns for day, month and year form date column.
-            date_format = '(?P<elec_day>[^.]+).(?P<elec_month>[^.]+).(?P<elec_year>[^.]+)'
-            elec_df = pd.concat([elec_df, elec_df["elec_date"].str.extract(date_format).astype(int)], axis=1)
-        except:
-            pass
+        # Loop through all declared elections.
+        for elec in elec_soup:
+            elec_dict = {}
+            # Name of Election
+            elec_type_str = get_elec_type_str(elec, elec_dict)
 
-    # Save election dataframe to .csv.
-    elec_df.to_csv(ppj("OUT_DATA_ELEC", "election_urls.csv"), index=False)
+            # Check if we want to scrap this type of election.
+            # LIST OF KEYS IN ELEC_TYPE_DICT!!
+            # elections_of_interest = [key for key, value in elec_type_dict.items()]
+            elections_of_interest = ["Bundestag", "Landtag", "Europa"]
+            if any(word in elec_type_str for word in elections_of_interest):
+                # If relevant, get download url.
+                elec_dict_list = elec_type_check(
+                    elec_type_dict, elec, mun_url, elec_dict, elec_dict_list)
+    except:  # WHICH ERROR?
+        pass
+
+    return elec_dict_list

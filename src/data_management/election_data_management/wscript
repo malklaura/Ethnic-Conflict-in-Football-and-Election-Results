@@ -12,10 +12,10 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
-        source='get_dwnld_urls.py',
+        source='scrape_dwnld_urls.py',
         deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
         target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_urls.csv'),
-        name='get_votes_df'
+        name='scrape_dwnld_urls'
     )
 
     ctx(
