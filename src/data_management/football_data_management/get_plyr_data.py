@@ -6,6 +6,7 @@ import re
 import urllib3
 import numpy as np
 import pandas as pd
+import multiporcessing as mp
 from bs4 import BeautifulSoup
 from bld.project_paths import project_paths_join as ppj
 
@@ -26,14 +27,20 @@ def get_unique_plyrs(game_df):
     return unique_plyrs
 
 
+def get_age_nat(plyr_url):
+    plyr_dict = {"url": plyr_url}
 
-def get_age_nat(plyr_soup, plyr_dict):
-    # Find "td" object containing relevant information.
+    http = urllib3.PoolManager(
+        cert_reqs='CERT_REQUIRED',
+        ca_certs=certifi.where())
+
+    page_request = http.request("GET", plyr_url)
+    plyr_soup = BeautifulSoup(page_request.data, 'lxml')
     info_soup = plyr_soup.find("td", {"class": "stammdaten"})
 
     # Scrape age and nationality information from each page. Due to the
     # possible specification of a nickname the location of age and
-    # nationality is not unqiuely defined by a single "tr" object, which 
+    # nationality is not unqiuely defined by a single "tr" object, which
     # is why one need to check two possibilities.
     try:
         if "Geburtsdatum" in info_soup.table.find_all("tr")[1].text:
@@ -79,27 +86,15 @@ if __name__ == '__main__':
     # Read in final dataset, containing all games and player data.
     game_df = pd.read_csv(
         ppj("OUT_DATA_FOOTBALL", "football_final.csv"), encoding='cp1252')
-
     unique_plyrs = get_unique_plyrs(game_df)
 
-    # create players dataset
-    http = urllib3.PoolManager(
-        cert_reqs='CERT_REQUIRED',
-        ca_certs=certifi.where())
-
-    plyr_df = pd.DataFrame()
-    plyr_dict = {}
-
-    for url in unique_plyrs:
-        plyr_dict["url"] = url
-
-        page_request = http.request("GET", url)
-        plyr_soup = BeautifulSoup(page_request.data, 'lxml')
-
-        plyr_dict = get_age_nat(plyr_soup, plyr_dict)
-        # Append dictionary to dataframe.
-        plyr_df = plyr_df.append(
-            plyr_dict, ignore_index=True)
+    # Scraping.
+    dict_list = []
+    with mp.Pool() as pool:
+        out = pool.map(get_age_nat, unique_plyrs)
+        dict_list.extend(out)
+    # Dicts to dataframe.
+    df = pd.DataFrame(dict_list)
 
     # Save player url, age and nationality in seperate csv file.
     plyr_df.to_csv(ppj("OUT_DATA_FOOTBALL", "player_data.csv"), index=False)
