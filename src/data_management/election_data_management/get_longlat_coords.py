@@ -26,21 +26,15 @@ def get_srch_term_list(elec_comb_df):
     return srch_term_list[0:10]
 
 
-if __name__ == '__main__':
-    # Read in combined election csv.
-    elec_comb_df = pd.read_csv(
-        ppj("OUT_DATA_ELEC", "election_combined.csv"), encoding='cp1252')
+def gmaps_elec_offices(srch_term_list, key):
+    """This functions get longitude, latitude and postal code data from a
+    google maps search. For each search term a dictionary is initalized
+    and appended to a dataframe."""
 
-    # Initialize pandas dataframe and dictionary to store coordinates.
-    elec_off_df = pd.DataFrame()
+    # Dict and dataframe o store geo information.
     elec_off_dict = {}
+    elec_off_df = pd.DataFrame()
 
-    # Combine election office name plus municipality name to get list of
-    # search terms to be used in google search.
-    srch_term_list = get_srch_term_list(elec_comb_df)
-
-    # API-Key for google search.
-    key = "AIzaSyCfFTBllwpO1fIkKbUvduBDyo_WXXxAFZE"
     # Get coordinates for search term.
     for srch_term in srch_term_list:
         geo = geocoder.google(srch_term, key=key)
@@ -62,8 +56,22 @@ if __name__ == '__main__':
         # Append dictionary to dataframe.
         elec_off_df = elec_off_df.append(elec_off_dict, ignore_index=True)
 
-    # Merge latitude and longitude data to combined election dataframe.
-    elec_final_df = pd.merge(elec_comb_df, elec_off_df,
+    return elec_off_df
+
+
+if __name__ == '__main__':
+    # Read in combined election csv.
+    elec_comb_df = pd.read_csv(
+        ppj("OUT_DATA_ELEC", "election_combined.csv"), encoding='cp1252')
+
+    # Election office name plus municipality name as search name.
+    srch_term_list = get_srch_term_list(elec_comb_df)
+    key = "AIzaSyCfFTBllwpO1fIkKbUvduBDyo_WXXxAFZE"
+
+    long_lat_df = gmaps_elec_offices(srch_term_list, key):
+
+        # Merge latitude and longitude data to combined election csv.
+    elec_final_df = pd.merge(elec_comb_df, long_lat_df,
                              how='left', on='srch_term')
 
     # Save as csv file.
