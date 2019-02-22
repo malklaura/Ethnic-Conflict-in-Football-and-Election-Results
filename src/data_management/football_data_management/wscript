@@ -22,10 +22,10 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
-        source='get_game_data.py',
+        source='scrape_games.py',
         deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_MTCHDAY', 'mtchday_scraping_finished.txt'),
         target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_FINAL', 'game_scraping_finished.txt'),
-        name='get_game_data'
+        name='scrape_games'
     )
 
     ctx(
