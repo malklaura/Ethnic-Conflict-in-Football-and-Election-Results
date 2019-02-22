@@ -19,6 +19,7 @@ def scrape_game_data(game_url):
     game_request = http.request("GET", game_url)
     soup = BeautifulSoup(game_request.data, 'lxml')
 
+    # Store game data in dictionary.
     game_dict = {"game_url": game_url}
     game_dict = get_smmry_data(soup, game_dict)
     game_dict = get_player_data(soup, game_dict)
@@ -32,12 +33,13 @@ def get_card_data(soup, game_dict):
     soup object and writes those information in the according matchday 
     dataframe. I record card color, player name, and minute of foul."""
 
-    # Find container with card information.
     try:
+        # Get container storing card information.
         cards_soup = soup.find(
             "table", {"class": "content_table_std spielerstrafen"})
         cards_soup = cards_soup.find_all("td", {"valign": "top"})
 
+        # Loop through home- and away-team.
         for i, team in enumerate(["home", "away"]):
             # Get cards soup for every team.
             team_cards = cards_soup[i].findAll("div", {"class": "tn_item"})
@@ -46,6 +48,7 @@ def get_card_data(soup, game_dict):
             game_dict["{}_card_yllw".format(team)] = 0
             game_dict["{}_card_red".format(team)] = 0
 
+            # Loop through cards by team.
             for j, card in enumerate(team_cards):
                 # Loop through all cards of respective team.
                 try:
@@ -71,7 +74,7 @@ def get_card_data(soup, game_dict):
                     elif team_cards[j].div["class"][0] == "icon_gelbrot":
                         game_dict["{}_card_clr_{}".format(
                             team, j)] = 3  # yellow / red = 3
-                        # count as two yellow cards
+                        # Count as two yellow cards.
                         game_dict["{}_card_yllw".format(team)] += 2
 
                     else:
@@ -97,10 +100,11 @@ def get_player_data(soup, game_dict):
         try:
             plyrs_soup = soup.findAll(
                 "div", {"class": "aufstellung_ausgabe_block {}side".format(team)})[0]
-            team_plyr = plyrs_soup.findAll("a", {"class": "spieler_linkurl"})
+            plyr_data = plyrs_soup.findAll("a", {"class": "spieler_linkurl"})
 
-            # Loop through players.
-            for j, plyr in enumerate(team_plyr):
+            # Loop through pla
+            yers by team.
+            for j, plyr in enumerate(plyr_data):
                 try:
                     game_dict["{}_plyr_{}".format(team, j)] = plyr.text
                     game_dict["{}_plyr_url_{}".format(team, j)] = plyr["href"]
@@ -133,7 +137,7 @@ def get_smmry_data(soup, game_dict):
     except AttributeError:
         pass
 
-    # Get game result and write to game dataframe.
+    # Get game result.
     try:
         result = soup.find("div", {"class": "stand"}).text
         game_dict["result"] = result
@@ -147,14 +151,14 @@ def get_smmry_data(soup, game_dict):
     except AttributeError:
         pass
 
+    # Get team, club name and repective url by team.
     try:
         smmry_soup = soup.find(
             "div", {"class": "spielbericht_ergebnis_wrapper"})
         club_title = smmry_soup.find_all("img")
         team_title = smmry_soup.findAll("div", {"class": "teaminfo"})
 
-        # Loop through home- and awayside team to retrieve team name and url
-        # as well as club name (teams are subdivisions within a club).
+        # Loop through teams.
         for j, team in enumerate(["home_", "away_"]):
             game_dict[team + "team"] = team_title[j].a["title"]
             game_dict[team + "team_url"] = team_title[j].a["href"]
@@ -163,3 +167,4 @@ def get_smmry_data(soup, game_dict):
         pass
 
     return game_dict
+    

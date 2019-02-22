@@ -11,7 +11,7 @@ def load_webdriver(webdriver_path, url, delay):
     """This functions loads the firefox webdriver for a prespecified 
     url. The sec argument generates some delay to ensure that the 
     driver is properly loaded before further code is run."""
-    
+
     # Lod webdriver with specified url.
     driver = webdriver.Firefox(executable_path=webdriver_path)
     driver.get(url)
@@ -26,6 +26,13 @@ def get_mun_soup(driver):
     """Given a webdriver object this function returns the
     corresponding soup object containing all municipalites
     listed on current site."""
+
+    # Secure https sites.
+    http = urllib3.PoolManager(
+        cert_reqs='CERT_REQUIRED',
+        ca_certs=certifi.where())
+
+    # Get soup object.
     page = driver.execute_script('return document.body.innerHTML')
     soup = BeautifulSoup(''.join(page), 'html.parser')
     mun_soup = soup.find_all("tr", {"role": "row"})[1:]
@@ -36,6 +43,7 @@ def fill_mun_dict(mun, elec_mun_df):
     """This functions stores the name, state and url of a single
     municipality in a dictionary that afterwards is appended to 
     a prespecified dataframe."""
+
     mun_dict = dict()
     mun_dict["elec_page"] = mun.a["href"]
     mun_dict["mun_name"] = mun.a.text
@@ -55,8 +63,7 @@ def run_scraping(driver):
     while True:
         soup, mun_soup = get_mun_soup(driver)
 
-        # Loop through all municipalities on a site. For now only utilize
-        # municipalities from NRW.
+        # Loop through all municipalities on each site.
         for mun in mun_soup:
             if mun.find_all("td")[2].text == "Nordrhein-Westfalen":
                 elec_mun_df = fill_mun_dict(mun, elec_mun_df)
@@ -69,18 +76,13 @@ def run_scraping(driver):
             driver.close()
             break
 
-    # Idnetiefy scrapable municipalties by substing in url.
-    key_indicators = ["://votemanager.", "://wahlen."]
+    # Identify scrapable municipalties by checking url string.
+    url_indicators = ["://votemanager.", "://wahlen."]
     elec_mun_df["scrapable"] = elec_mun_df["elec_page"].apply(
-        lambda x: 1 if any(key in x for key in key_indicators) else 0)
+        lambda x: 1 if any(key in x for key in url_indicators) else 0)
     return elec_mun_df
 
 if __name__ == '__main__':
-    # Needed to work with https sites.
-    http = urllib3.PoolManager(
-        cert_reqs='CERT_REQUIRED',
-        ca_certs=certifi.where())
-
     # Open Firefox driver and open votemanager site.
     webdriver_path = r"C:/Users/maxim/Documents/master_eco/eco/geckodriver.exe"
     votemanger_url = "http://wahlen.votemanager.de"

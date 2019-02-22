@@ -8,6 +8,9 @@ from bld.project_paths import project_paths_join as ppj
 
 
 def get_soup_obj(url):
+    http = urllib3.PoolManager(
+        cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
+
     page_request = http.request("GET", url)
     soup = BeautifulSoup(page_request.data, 'lxml')
     return soup
@@ -34,13 +37,11 @@ def get_mtchdy_data(games, matchday_df, file_name):
         matchday_df = matchday_df.append(game_dict, ignore_index=True)
     return matchday_df
 
-if __name__ == '__main__':
-    http = urllib3.PoolManager(
-        cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
+if __name__ == '__main__':
     league_df = pd.read_csv(
         ppj("OUT_DATA_FOOTBALL", "matchday_data.csv"), encoding='cp1252')
-    league_url_list = league_df["mtchdy_url"].tolist()[0:2]
+    league_url_list = league_df["mtchdy_url"].tolist()
 
     for i, url in enumerate(league_url_list):
 
@@ -56,5 +57,5 @@ if __name__ == '__main__':
         matchday_df.to_csv(ppj("OUT_DATA_FOOTBALL_MTCHDAY",
                                "{}.csv".format(file_name)), index=False)
 
-    open(ppj("OUT_DATA_FOOTBALL_MTCHDAY", "mtchday_scraping_finished.txt"), 'a').close()
-
+    open(ppj("OUT_DATA_FOOTBALL_MTCHDAY",
+             "mtchday_scraping_finished.txt"), 'a').close()

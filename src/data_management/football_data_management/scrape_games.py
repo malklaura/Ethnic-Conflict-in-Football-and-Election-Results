@@ -4,7 +4,7 @@ import certifi
 import pandas as pd
 import multiprocessing as mp
 from bld.project_paths import project_paths_join as ppj
-from src.data_management.football_data_management.scrape_games import scrape_game_data
+from src.data_management.football_data_management.scrape_games import get_game_data
 
 
 def main():
@@ -26,23 +26,18 @@ def main():
             out = pool.map(scrape_game_data, mtchdy_df.game_url.values)
             dict_list.extend(out)
 
-        # To dicts to daraframe.
+        # Dicts to daraframe.
         df = pd.DataFrame(dict_list)
 
+        # Merge game ID to dataframe to unique identify data.
         game_id = mtchdy_df.loc[i, "ID"]
         df["game_id"] = game_id
-
-        # # Split date into day, month and year and store in seperate columns.
-        # date_data = '(?P<fb_day>[^.]+).(?P<fb_month>[^.]+).(?P<fb_year>[^.]+)'
-        # df = pd.concat(
-        #     [df, df["date"].str.extract(date_data).astype(int)], axis=1)
-        # # To four digit integer.
-        # df["fb_year"] = df["fb_year"] + 2000
 
         # Save as csv file.
         df.to_csv(ppj("OUT_DATA_FOOTBALL_FINAL",
                       "{}.csv".format(game_id)), index=False)
 
+    # Indicate that scraping is finished by creating .txt file.
     open(ppj("OUT_DATA_FOOTBALL_FINAL", "game_scraping_finished.txt"), 'a').close()
 
 if __name__ == '__main__':
