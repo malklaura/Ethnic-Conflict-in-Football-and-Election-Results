@@ -72,6 +72,9 @@ if __name__ == '__main__':
 
     colnames_list = expand_voting_files(elec_master_df)
 
+    # Txt file indicating finshing of scraping.
+    open(ppj("OUT_DATA_ELEC_CSV", "elec_dwnld_finished.txt"), 'a').close()
+
     # Load all csv files from csv voting folder.
     out_csv = combine_voting_files(colnames_list)
 
