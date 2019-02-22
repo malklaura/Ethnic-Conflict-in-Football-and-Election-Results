@@ -19,5 +19,18 @@ def test_number_of_yellow_cards(get_game_soup):
 	game_dict = {}
 	game_dict = get_card_data(get_game_soup, game_dict)
 	assert game_dict["home_card_min_0"] == 83
+	assert game_dict["home_card_min_0"] == None
+	assert game_dict["home_card_min_0"] == None
+	assert game_dict["away_card_min_0"] == 63
+	assert game_dict["away_card_min_1"] == 63
+	assert game_dict["away_card_min_2"] == 67
+	
 	assert game_dict["home_card_clr_0"] == 2
+	assert game_dict["home_card_clr_1"] == None
+	assert game_dict["home_card_yllw"] == None
+	assert game_dict["home_card_red"] == 1
+
+	assert game_dict["away_card_clr_0"] == 1
+	assert game_dict["away_card_clr_1"] == 1
 	assert game_dict["away_card_yllw"] == 6
+	assert game_dict["away_card_red"] == 0

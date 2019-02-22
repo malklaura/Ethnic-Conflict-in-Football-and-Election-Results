@@ -20,7 +20,7 @@ def test_player_names(get_game_soup):
 	game_dict = get_player_data(get_game_soup, game_dict)
 	assert game_dict["home_plyr_0"] == "Jüttemeier, Christopher"
 	assert game_dict["home_plyr_1"] == "Derksen, Lars"
-	assert game_dict["home_plyr_2"] == "Ohno, Takahito"
+	assert game_dict["home_plyr_2"] == "Dürscheid, Thomas"
 
 	assert game_dict["away_plyr_0"] == "Salmen, Christian"
 	assert game_dict["away_plyr_1"] == "Wirsing, Philipp"
