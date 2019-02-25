@@ -31,7 +31,7 @@ def expand_voting_files(elec_master_df):
     municipality name, voting level and state. Further a list containing 
     all occuring column names is created."""
 
-    dwnld_url_list = elec_master_df["dwnld_url"].tolist()[0:10]
+    dwnld_url_list = elec_master_df["dwnld_url"].tolist()
 
     colnames_list = [""]
     for i, export_url in enumerate(dwnld_url_list):
@@ -42,8 +42,9 @@ def expand_voting_files(elec_master_df):
             "OUT_DATA_ELEC_CSV", '{}.csv'.format(file_name)))
 
         # Merge identifying variables to newly downloaded csv files.
-        temp_df = pd.read_csv(ppj("OUT_DATA_ELEC_CSV", "{}.csv".format(file_name)), sep=";")
-        
+        temp_df = pd.read_csv(
+            ppj("OUT_DATA_ELEC_CSV", "{}.csv".format(file_name)), sep=";")
+
         # Get column names to ASCI.
         temp_df.columns = [unidecode(x).lower() for x in temp_df.columns]
         temp_df.rename(columns={"name": "elec_off_name"}, inplace=True)
@@ -57,7 +58,7 @@ def expand_voting_files(elec_master_df):
 
         # Overwrite original csv file with with expanded columns.
         temp_df.to_csv(
-            ppj("OUT_DATA_ELEC_CSV", '{}.csv'.format(file_name)))
+            ppj("OUT_DATA_ELEC_CSV", '{}.csv'.format(file_name)), index=False)
 
         # Get columns of temp_df and append those to overall columns list.
         temp_columns = list(temp_df)
