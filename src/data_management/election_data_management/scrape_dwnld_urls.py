@@ -15,7 +15,7 @@ def main():
 
     # Multiprocessed scraping.
     with mp.Pool() as pool:
-        out = pool.map(run_scraping, elec_df.mun_url.values)
+        out = pool.map(scrape_elec_data, elec_df.mun_url.values)
         out = list(itertools.chain.from_iterable(out))  # Flatten list.
         dict_list.extend(out)  # Extent dictionaries to list.
 
