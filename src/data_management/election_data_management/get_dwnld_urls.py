@@ -143,7 +143,7 @@ def run_scraping(mun_url):
 
         # Loop through all declared elections.
         for elec in elec_soup:
-            elec_dict = {}
+            elec_dict = {"mun_url": mun_url}
             # Name of Election
             elec_type_str = get_elec_type_str(elec, elec_dict)
 
