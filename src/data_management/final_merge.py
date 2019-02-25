@@ -57,7 +57,7 @@ if __name__ == '__main__':
     #final_df = final_df[final_df["time_dist"].between(0, 14, inclusive=True)]
 
     # Group by election id and date, which results in the final dataframe.
-    final_df = final_df.groupby(['elec_off_name', 'elec_id']).mean()
+    final_df = final_df.groupby(['elec_off_name', 'elec_id']).mean().reset_index()
 
     # Save to csv.
     final_df.to_csv(ppj("OUT_DATA", "master_file.csv"), index=False)
