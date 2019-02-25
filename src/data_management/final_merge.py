@@ -53,11 +53,11 @@ if __name__ == '__main__':
 
     # Drop those matches that are within 20km and no longer apart than two
     # weeks.
-#final_df = final_df[final_df["geo_dist"] < 20]
-#final_df = final_df[final_df["time_dist"].between(0, 14, inclusive=True)]
+    #final_df = final_df[final_df["geo_dist"] < 20]
+    #final_df = final_df[final_df["time_dist"].between(0, 14, inclusive=True)]
 
     # Group by election id and date, which results in the final dataframe.
-    final_df = final_df.groupby('elec_id').mean()
+    final_df = final_df.groupby(['elec_off_name', 'elec_id']).mean()
 
     # Save to csv.
     final_df.to_csv(ppj("OUT_DATA", "master_file.csv"), index=False)
