@@ -10,7 +10,7 @@ def main():
     # Scraping.
     dict_list = []
     with mp.Pool() as pool:
-        out = pool.map(scrape_game_data, game_df.game_url[0:3000].values)
+        out = pool.map(scrape_game_data, game_df.game_url.values)
         dict_list.extend(out)
 
     df = pd.DataFrame(dict_list)  # Dicts to dataframe.

@@ -84,42 +84,8 @@ def get_dwnld_url(level, elec_abbrev, elec_dict):
     return elec_dict
 
 
-def elec_type_check(elec_type_dict, elec, mun_url, elec_dict, elec_dict_list):
-    """This function checks, wheter a possible elections fulfills the requirements
-    of the elections we want to download. The specific requirements are stored in 
-    the elec_type dictionary."""
-
-    # Get copy of election type dict.
-    temp_elec_type_dict = elec_type_dict
-    # Needed since there are occurrences of multiple elections on the same day.
-    pssbl_elections = get_pssbl_elections(elec, mun_url, elec_dict)
-    # Loop through all listed elections.
-    for poss_elec in pssbl_elections:
-        # Loop through election type dicts.
-        for key, elec_type in temp_elec_type_dict.copy().items():
-            # Check if possible election matches election type criteria.
-            if elec_type["srch_trm"] in poss_elec.script.get_text():
-                voting_lvl = get_voting_lvl(poss_elec, elec_dict)
-                for level in voting_lvl:
-                    # Get csv download url on election office (Wahlbuero)
-                    # level.
-                    if elec_type["level"] in level.text:
-                        elec_dict = get_dwnld_url(
-                            level, elec_type["abbrev"], elec_dict)
-                        elec_dict_list.append(elec_dict)
-                        # Exclude used election type dict from further
-                        # consideration.
-                        del temp_elec_type_dict[key]
-            else:
-                pass
-
-    return elec_dict_list
-
-
-def run_scraping(mun_url):
-    """Run web scraping process over all scrapable municipalities. In the end 
-    a dataframe containing all download urls is returned for those elections
-    of interest."""
+def get_elec_type_dict():
+    """Create dictionary of individual election type dictionaries."""
 
     # Dictionary with relevant information for all considered elections.
     bw_dict = {"srch_trm": "Bundestag",
@@ -133,6 +99,49 @@ def run_scraping(mun_url):
     elec_type_dict = {"Bundestagswahl": bw_dict,
                       "Landtagswahl": lw_dict,
                       "Europawahl": ew_dict}
+
+    return elec_type_dict
+
+
+def elec_type_check(elec, mun_url, elec_dict, elec_dict_list):
+    """This function checks, wheter a possible elections fulfills the requirements
+    of the elections we want to download. The specific requirements are stored in 
+    the elec_type dictionary."""
+
+    # Needed since there are occurrences of multiple elections on the same day.
+    pssbl_elections = get_pssbl_elections(elec, mun_url, elec_dict)
+
+    # Relod election type dict.
+    elec_type_dict = get_elec_type_dict()
+
+    # Loop through all listed elections.
+    for poss_elec in pssbl_elections:
+        # Loop through election type dicts.
+        for key, elec_type in elec_type_dict.copy().items():
+            # for key, elec_type in elec_type_dict.items():
+            # Check if possible election matches election type criteria.
+            if elec_type["srch_trm"] in poss_elec.script.get_text():
+                voting_lvl = get_voting_lvl(poss_elec, elec_dict)
+                for level in voting_lvl:
+                    # Get csv download url on election office (Wahlbuero)
+                    # level.
+                    if elec_type["level"] in level.text:
+                        elec_dict = get_dwnld_url(
+                            level, elec_type["abbrev"], elec_dict)
+                        elec_dict_list.append(elec_dict)
+                        # Exclude used election type dict from further
+                        # consideration.
+                        del elec_type_dict[key]
+            else:
+                pass
+
+    return elec_dict_list
+
+
+def scrape_elec_data(mun_url):
+    """Run web scraping process over all scrapable municipalities. In the end 
+    a dataframe containing all download urls is returned for those elections
+    of interest."""
 
     # Append all election dictionaries to this list
     elec_dict_list = []
@@ -148,14 +157,12 @@ def run_scraping(mun_url):
             elec_type_str = get_elec_type_str(elec, elec_dict)
 
             # Check if we want to scrap this type of election.
-            # LIST OF KEYS IN ELEC_TYPE_DICT!!
-            # elections_of_interest = [key for key, value in elec_type_dict.items()]
             elections_of_interest = ["Bundestag", "Landtag", "Europa"]
             if any(word in elec_type_str for word in elections_of_interest):
                 # If relevant, get download url.
                 elec_dict_list = elec_type_check(
-                    elec_type_dict, elec, mun_url, elec_dict, elec_dict_list)
-    except:  # WHICH ERROR?
+                    elec, mun_url, elec_dict, elec_dict_list)
+    except:
         pass
 
     return elec_dict_list

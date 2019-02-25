@@ -3,7 +3,7 @@ import itertools
 import pandas as pd
 import multiprocessing as mp
 from bld.project_paths import project_paths_join as ppj
-from src.data_management.election_data_management.get_dwnld_urls import run_scraping
+from src.data_management.election_data_management.get_dwnld_urls import scrape_elec_data
 
 
 def main():
