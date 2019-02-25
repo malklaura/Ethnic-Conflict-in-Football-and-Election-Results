@@ -6,15 +6,15 @@ import re
 import urllib3
 import numpy as np
 import pandas as pd
-import multiporcessing as mp
+import multiprocessing as mp
 from bs4 import BeautifulSoup
 from bld.project_paths import project_paths_join as ppj
 
 
 def get_unique_plyrs(game_df):
+    """ Get columns containining individual player urls from homeside and
+    awayside teams."""
 
-    # Get columns containining individual player urls from homeside and
-    # awayside teams.
     filter_col = [col for col in game_df if '_plyr_url' in col]
 
     # Only keep unique player urls.
@@ -28,6 +28,9 @@ def get_unique_plyrs(game_df):
 
 
 def get_age_nat(plyr_url):
+    """This function return age and  nationality of a player from 
+    the provided player url."""
+
     plyr_dict = {"url": plyr_url}
 
     http = urllib3.PoolManager(
@@ -63,7 +66,6 @@ def get_age_nat(plyr_url):
 
     return plyr_dict
 
-
 # def get_stations(plyr_soup, plyr_dict):
 #     try:
 #         stations_soup = plyr_soup.find("table", {"class": "stationen content_table_std"})
@@ -81,20 +83,18 @@ def get_age_nat(plyr_url):
 
 #     return plyr_dict
 
-
 if __name__ == '__main__':
     # Read in final dataset, containing all games and player data.
-    game_df = pd.read_csv(
-        ppj("OUT_DATA_FOOTBALL", "football_final.csv"), encoding='cp1252')
+    game_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "football_combined.csv"))
     unique_plyrs = get_unique_plyrs(game_df)
 
-    # Scraping.
+    # Scraping via multiprocessing.
     dict_list = []
     with mp.Pool() as pool:
         out = pool.map(get_age_nat, unique_plyrs)
         dict_list.extend(out)
-    # Dicts to dataframe.
-    df = pd.DataFrame(dict_list)
+
+    plyr_df = pd.DataFrame(dict_list) # Dicts to df.
 
     # Save player url, age and nationality in seperate csv file.
     plyr_df.to_csv(ppj("OUT_DATA_FOOTBALL", "player_data.csv"), index=False)

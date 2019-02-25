@@ -39,34 +39,37 @@ def get_mun_soup(driver):
     return soup, mun_soup
 
 
-def fill_mun_dict(mun, elec_mun_df):
+def fill_mun_dict(mun, elec_df):
     """This functions stores the name, state and url of a single
-    municipality in a dictionary that afterwards is appended to 
+    municipality in a dictionary. Afterwards this dict is appended to 
     a prespecified dataframe."""
 
     mun_dict = dict()
-    mun_dict["elec_page"] = mun.a["href"]
+    mun_dict["mun_url"] = mun.a["href"]
     mun_dict["mun_name"] = mun.a.text
     mun_dict["state"] = mun.find_all("td")[2].text
 
-    elec_mun_df = elec_mun_df.append(mun_dict, ignore_index=True)
-    return elec_mun_df
+    elec_df = elec_df.append(mun_dict, ignore_index=True)
+    return elec_df
 
 
 def run_scraping(driver):
-    """This function scrapes all relevant information of municipalities
+    """This function scrapes all relevant information of municipalities<
     in the state of NRW. As soon as the end of a page is read, the scraping
     automatically continues on the next site, until the last page of 
     the votemanager site is reached."""
-    elec_mun_df = pd.DataFrame()
 
+    # Dataframe to store data.
+    elec_df = pd.DataFrame()
+
+    # Loop through all available sites.
     while True:
         soup, mun_soup = get_mun_soup(driver)
 
         # Loop through all municipalities on each site.
         for mun in mun_soup:
             if mun.find_all("td")[2].text == "Nordrhein-Westfalen":
-                elec_mun_df = fill_mun_dict(mun, elec_mun_df)
+                elec_df = fill_mun_dict(mun, elec_df)
 
         # Go to next page when all municipalties are scraped.
         driver.find_element_by_xpath('//a[text()="weiter"]').click()
@@ -78,9 +81,9 @@ def run_scraping(driver):
 
     # Identify scrapable municipalties by checking url string.
     url_indicators = ["://votemanager.", "://wahlen."]
-    elec_mun_df["scrapable"] = elec_mun_df["elec_page"].apply(
+    elec_df["scrapable"] = elec_df["mun_url"].apply(
         lambda x: 1 if any(key in x for key in url_indicators) else 0)
-    return elec_mun_df
+    return elec_df
 
 if __name__ == '__main__':
     # Open Firefox driver and open votemanager site.
@@ -89,5 +92,8 @@ if __name__ == '__main__':
     driver = load_webdriver(webdriver_path, votemanger_url, 5)
 
     # Run scraping process, afterwards store resulting dataframe.
-    elec_mun_df = run_scraping(driver)
-    elec_mun_df.to_csv(ppj("OUT_DATA_ELEC", "election_mun.csv"))
+    elec_df = run_scraping(driver)
+    elec_df = elec_df[elec_df["scrapable"] == 1]
+    elec_df.drop("scrapable",  axis=1, inplace=True)
+
+    elec_df.to_csv(ppj("OUT_DATA_ELEC", "election_mun.csv"), index=False)

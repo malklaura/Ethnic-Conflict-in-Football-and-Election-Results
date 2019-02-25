@@ -48,43 +48,45 @@ def get_card_data(soup, game_dict):
             game_dict["{}_card_yllw".format(team)] = 0
             game_dict["{}_card_red".format(team)] = 0
 
-            # Loop through cards by team.
-            for j, card in enumerate(team_cards):
-                # Loop through all cards of respective team.
-                try:
-                    # Get player name and minute of card.
-                    player = card.a.text
-                    minute = card.find(
-                        "span", {"class": "klammerzahl"}).text[:-1]
-
-                    game_dict["{}_card_plyr_{}".format(team, j)] = player
-                    game_dict["{}_card_min_{}".format(team, j)] = int(minute)
-
-                    # Scrape card colors and contiuously count cards.
-                    if team_cards[j].div["style"] == "color:#FBDB04;":
-                        game_dict["{}_card_clr_{}".format(
-                            team, j)] = 1  # yellow = 1
-                        game_dict["{}_card_yllw".format(team)] += 1
-
-                    elif team_cards[j].div["style"] == "color:#D7110C;":
-                        game_dict["{}_card_clr_{}".format(
-                            team, j)] = 2  # red = 2
-                        game_dict["{}_card_red".format(team)] += 1
-
-                    elif team_cards[j].div["class"][0] == "icon_gelbrot":
-                        game_dict["{}_card_clr_{}".format(
-                            team, j)] = 3  # yellow / red = 3
-                        # Count as two yellow cards.
-                        game_dict["{}_card_yllw".format(team)] += 2
-
-                    else:
-                        game_dict["{}_card_clr_{}".format(team, j)] = np.nan
-
-                except AttributeError:
-                    pass
+            game_dict = get_card_color(team_cards, game_dict, team)
 
     except AttributeError:
         pass
+
+    return game_dict
+
+
+def get_card_color(team_cards, game_dict, team):
+    # Loop through cards by team.
+    for j, card in enumerate(team_cards):
+        # Loop through all cards of respective team.
+        try:
+            # Get player name and minute of card.
+            player = card.a.text
+            minute = card.find("span", {"class": "klammerzahl"}).text[:-1]
+
+            game_dict["{}_card_plyr_{}".format(team, j)] = player
+            game_dict["{}_card_min_{}".format(team, j)] = int(minute)
+
+            # Scrape card colors and contiuously count cards.
+            if team_cards[j].div["style"] == "color:#FBDB04;":
+                game_dict["{}_card_clr_{}".format(team, j)] = 1  # yellow = 1
+                game_dict["{}_card_yllw".format(team)] += 1
+
+            elif team_cards[j].div["style"] == "color:#D7110C;":
+                game_dict["{}_card_clr_{}".format(team, j)] = 2  # red = 2
+                game_dict["{}_card_red".format(team)] += 1
+
+            elif team_cards[j].div["class"][0] == "icon_gelbrot":
+                game_dict["{}_card_clr_{}".format(team, j)] = 3  # yellow/red=3
+                # Counted as two yellow.
+                game_dict["{}_card_yllw".format(team)] += 2
+
+            else:
+                game_dict["{}_card_clr_{}".format(team, j)] = np.nan
+
+        except AttributeError:
+            pass
 
     return game_dict
 
@@ -102,8 +104,7 @@ def get_player_data(soup, game_dict):
                 "div", {"class": "aufstellung_ausgabe_block {}side".format(team)})[0]
             plyr_data = plyrs_soup.findAll("a", {"class": "spieler_linkurl"})
 
-            # Loop through pla
-            yers by team.
+            # Loop through players by team.
             for j, plyr in enumerate(plyr_data):
                 try:
                     game_dict["{}_plyr_{}".format(team, j)] = plyr.text
@@ -131,8 +132,8 @@ def get_smmry_data(soup, game_dict):
         matchday = re.search(r'[|]\d+', date_string).group(0)[1:]
 
         game_dict["league"] = league
-        game_dict["date"] = date
-        game_dict["time"] = time
+        game_dict["fb_date"] = date
+        game_dict["fb_time"] = time
         game_dict["matchday"] = matchday
     except AttributeError:
         pass
@@ -167,4 +168,3 @@ def get_smmry_data(soup, game_dict):
         pass
 
     return game_dict
-    

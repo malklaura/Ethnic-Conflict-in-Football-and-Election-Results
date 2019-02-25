@@ -11,15 +11,16 @@ def build(ctx):
         name='get_simulation_draws'
     )
 
-    # ctx(
-    #     features='run_py_script',
-    #     source='final_merge.py',
-    #     deps=[
-    #     	ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_final.csv'),
-    #     	ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_final_longlat_nat.csv')],
-    #     target=ctx.path_to(ctx, 'OUT_DATA', 'master_file.csv'),
-    #     name='final_merge'
-    # )
+    ctx(
+        features='run_py_script',
+        source='final_merge.py',
+        deps=[
+          	ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_final.csv'),
+         	ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_final.csv')
+            ],
+        target=ctx.path_to(ctx, 'OUT_DATA', 'master_file.csv'),
+        name='final_merge'
+    )
 
     # Tests
     ctx(

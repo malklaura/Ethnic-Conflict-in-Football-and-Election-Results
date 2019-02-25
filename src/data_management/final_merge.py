@@ -27,7 +27,7 @@ def get_time_distance(final_df):
     final_df["elec_date"] = [datetime.strptime(
         x, "%d.%m.%Y") for x in final_df["elec_date"]]
     final_df["fb_date"] = [datetime.strptime(
-        x, "%d.%m.%y") for x in final_df["date"]]
+        x, "%d.%m.%y") for x in final_df["fb_date"]]
 
     # Compute time difference in days.
     final_df["time_dist"] = [(final_df.loc[
@@ -38,10 +38,8 @@ def get_time_distance(final_df):
 if __name__ == '__main__':
     # Read in both final datasets, containing all election and football game
     # data.
-    election_df = pd.read_csv(
-        ppj("OUT_DATA_ELEC", "election_final.csv"), encoding='cp1252')
-    football_df = pd.read_csv(
-        ppj("OUT_DATA_FOOTBALL", "football_final_longlat_nat.csv"), encoding='cp1252')
+    election_df = pd.read_csv(ppj("OUT_DATA_ELEC", "election_final.csv"))
+    football_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "football_final.csv"))
 
     # Merge dataframes according to postal code and year column.
     final_df = pd.merge(election_df, football_df, left_on=[
@@ -55,11 +53,11 @@ if __name__ == '__main__':
 
     # Drop those matches that are within 20km and no longer apart than two
     # weeks.
-    final_df = final_df[final_df["geo_dist"] < 20]
-    final_df = final_df[final_df["time_dist"].between(0, 14, inclusive=True)]
+#final_df = final_df[final_df["geo_dist"] < 20]
+#final_df = final_df[final_df["time_dist"].between(0, 14, inclusive=True)]
 
     # Group by election id and date, which results in the final dataframe.
-    final_df = final_df.groupby(['elec_id', 'elec_date']).mean()
+    final_df = final_df.groupby('elec_id').mean()
 
     # Save to csv.
     final_df.to_csv(ppj("OUT_DATA", "master_file.csv"), index=False)

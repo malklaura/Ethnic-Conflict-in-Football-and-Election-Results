@@ -3,6 +3,7 @@ import urllib3
 import certifi
 import pandas as pd
 from bs4 import BeautifulSoup
+from unidecode import unidecode
 from bld.project_paths import project_paths_join as ppj
 
 
@@ -10,6 +11,7 @@ def get_soup_obj(url):
     """Given an url this function returns the soup object, i.e., it gets
     the page request and pulls the data out of HTML code, needed to
     start the actual web scraping process."""
+    
     page_request = http.request("GET", url)
     soup = BeautifulSoup(page_request.data, 'lxml')
     return soup
@@ -28,10 +30,10 @@ def get_district_list(region, main_url, matchday_dict):
     region_soup = get_soup_obj(region_url)
 
     # Store region name and corresponding url in matchday dictionary.
-    matchday_dict["region"] = region
+    matchday_dict["region"] = unidecode(region)
     matchday_dict["region_url"] = region_url
 
-    # Find district object from region soup object, construct url for 
+    # Find district object from region soup object, construct url for
     # each district and store those urls in a list.
     districts_soup = region_soup.find("td", {"class": "kreise_select"}).div
     districts_url_list = [main_url + a['href']
@@ -46,11 +48,13 @@ def get_league_list(district_url, matchday_dict):
     """Given an url this function returns the soup object, i.e., it gets 
     the page request and pulls the data out of HTML code, needed to 
     start the actual web scraping process."""
+    
     district_soup = get_soup_obj(district_url)
     district = district_soup.find(
         "td", {"class": "kreise_select"}).div.a.span.text
+    district = re.sub('\s|-', '_', district).lower()
 
-    matchday_dict["district"] = re.sub('\s|-', '_', district).lower()
+    matchday_dict["district"] = unidecode(district)
     matchday_dict["district_url"] = district_url
 
     leagues_soup = district_soup.find(
@@ -80,11 +84,10 @@ def get_seaons_list(league_url, matchday_dict):
         ",", "", league_name)).lower()
 
     # Write league and corresponding url in matchday dictionary.
-    matchday_dict["league"] = league_name
+    matchday_dict["league"] = unidecode(league_name)
     matchday_dict["league_url"] = league_url
 
-    # To also extract all past seasons, I locate the archive and the items
-    # therein, i.e., past seasons.
+    # Extract all previous seasons.
     seasons_list = league_soup.find(
         "table", {"class": "liga_tabelle_archiv"})
     seasons_list = seasons_list.findAll("a")
@@ -103,31 +106,33 @@ def get_matchday_url(season, matchday_dict, matchday_df):
 
     # For the current season the way to access the matchday page is
     # slightly different from the one to access past seasons.
-    if "html" in season["href"]: # Past seasons.
+    if "html" in season["href"]:  # Past seasons.
         mtchdy_season_url = season["href"].replace(
             ".html", "/spielplan.html")
         matchday_dict["current_season"] = 0
-    else: # Current season.
+    else:  # Current season.
         mtchdy_season_url = season["href"] + "/spielplan"
         matchday_dict["current_season"] = 1
 
     # Store further information about league in matchday dictionary.
     matchday_dict["done"] = 0
-    matchday_dict["season"] = season_name
+    matchday_dict["season"] = unidecode(season_name)
     matchday_dict["mtchdy_url"] = mtchdy_season_url
-    # Construct unique ID for each season by combining information from 
-    # all four stages of scraping process.
-    matchday_dict["ID"] = "_".join([matchday_dict["region"], matchday_dict[
-                                   "district"], matchday_dict["league"], matchday_dict["season"]])
 
-    # Chnage umlaute to english grammar.
-    umlaute_dict = {"ä": "ae", "Ä": "Ae", "ö": "oe",
-                    "Ö": "Oe", "ü": "ue", "Ü": "Ue", "ß": "ss"}
+    # Construct unique ID for each season by combining information from
+    # all four stages of scraping process.
+    matchday_dict["mtchday_id"] = "_".join(
+        [
+            matchday_dict["region"],
+            matchday_dict["district"],
+            matchday_dict["league"],
+            matchday_dict["season"]
+        ]
+    )
 
     # Append dictionary to matchday dataframe.
     matchday_df = matchday_df.append(
         matchday_dict, ignore_index=True)
-    matchday_df.replace(umlaute_dict, regex=True, inplace=True)
 
     return matchday_df
 
@@ -162,7 +167,7 @@ if __name__ == '__main__':
                 seasons_list = get_seaons_list(league_url, matchday_dict)
 
                 # Get matchday url for all seasons within a league, from which
-                # to start actual scraping.
+                # to start scraping.
                 for season in seasons_list:
                     matchday_df = get_matchday_url(
                         season, matchday_dict, matchday_df)
