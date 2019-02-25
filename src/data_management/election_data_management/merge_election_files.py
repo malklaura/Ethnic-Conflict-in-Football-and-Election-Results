@@ -20,6 +20,7 @@ def main():
     elec_df["elec_id"] = elec_df["mun_clearname"] + "_" + \
         elec_df["abbrev"] + "_" + elec_df["elec_date"]
     elec_df["elec_id"] = [unidecode(x) for x in elec_df["elec_id"]]
+    elec_df["elec_id"] = elec_df["elec_id"].replace("[^a-zA-Z0-9_]+", "", regex=True)
 
     # Split date into day, month and year and store in separate columns.
     date_clmns = '(?P<elec_day>[^.]+).(?P<elec_month>[^.]+).(?P<elec_year>[^.]+)'
