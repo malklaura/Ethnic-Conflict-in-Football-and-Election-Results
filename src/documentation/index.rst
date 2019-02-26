@@ -1,9 +1,5 @@
 .. This the Term Paper Effective Programming project's documentation master file.
 
-.. You can adapt this file completely to your liking,
-.. but it should at least contain the `toctree` directive.
-
-
 Welcome to the Term Paper Effective Programming project's documentation!
 ================================================================================================
 
@@ -11,12 +7,6 @@ Welcome to the Term Paper Effective Programming project's documentation!
     :maxdepth: 2
 
     introduction
-    original_data
     data_management
-    analysis
-    final
-    paper
-    model_code
-    model_specs
-    library
-    references
+    elec_data_management
+    fb_data_management

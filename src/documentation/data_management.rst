@@ -7,8 +7,5 @@ Data management
 
 Documentation of the code in *src.data_management*.
 
-.. automodule:: src.data_management.get_simulation_draws
-    :members:
-
 .. automodule:: src.data_management.election_data_management.scrape_dwnld_urls
     :members:
