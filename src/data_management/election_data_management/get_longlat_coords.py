@@ -24,7 +24,7 @@ def get_srch_term_list(elec_df):
     srch_term_list = elec_df["srch_term"].unique().tolist()
     srch_term_list = [x for x in srch_term_list if x is not None]
 
-    return srch_term_list
+    return srch_term_list[0:10]
 
 
 def clean_srch_term(srch_term):
@@ -85,6 +85,7 @@ if __name__ == '__main__':
 
     # Election office name plus municipality name as search name.
     srch_term_list = get_srch_term_list(elec_df)
+    print(srch_term_list)
 
     # Google maps search via multiprocessing.
     dict_list = []
@@ -93,6 +94,7 @@ if __name__ == '__main__':
         dict_list.extend(out)
 
     long_lat_df = pd.DataFrame(dict_list)  # Dicts to dataframe.
+    print(long_lat_df)
     long_lat_df.to_csv(
         ppj("OUT_DATA_ELEC", "elec_off_longlat.csv"), index=False)
 

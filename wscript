@@ -18,15 +18,13 @@ def set_project_paths(ctx):
     pp["IN_DATA"] = "src/original_data/"
     pp["IN_MODEL_CODE"] = "src/model_code"
     pp["IN_MODEL_SPECS"] = "src/model_specs"
+    pp['IN_DATA_MANAGEMENT'] = 'src/data_management' 
     pp["LIBRARY"] = "src/library"
     pp["BLD"] = ""
     pp["OUT_DATA"] = f"{out}/out/data"
     pp["OUT_DATA_ELEC"] = f"{out}/out/data/election_files"
     pp["OUT_DATA_ELEC_CSV"] = f"{out}/out/data/election_files/download_csv"
-    pp["OUT_DATA_FOOTBALL"] = f"{out}/out/data/football_files"
-    pp['IN_DATA_MANAGEMENT'] = 'src/data_management'    
-    #pp["OUT_DATA_FOOTBALL_MTCHDAY"] = f"{out}/out/data/football_files/mtchday_csv"
-    #pp["OUT_DATA_FOOTBALL_FINAL"] = f"{out}/out/data/football_files/final_csv"
+    pp["OUT_DATA_FOOTBALL"] = f"{out}/out/data/football_files"   
     pp["OUT_ANALYSIS"] = f"{out}/out/analysis"
     pp["OUT_FINAL"] = f"{out}/out/final"
     pp["OUT_FIGURES"] = f"{out}/out/figures"

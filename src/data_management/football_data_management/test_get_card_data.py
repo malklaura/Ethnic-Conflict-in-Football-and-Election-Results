@@ -1,5 +1,5 @@
 import pytest
-from src.data_management.football_data_management.get_game_data import get_card_data
+from src.data_management.football_data_management.get_game_data import *
 
 @pytest.fixture
 def get_game_soup():
@@ -15,22 +15,103 @@ def get_game_soup():
 
 	return game_soup
 
-def test_number_of_yellow_cards(get_game_soup):
+def test_card_color_and_min(get_game_soup):
 	game_dict = {}
 	game_dict = get_card_data(get_game_soup, game_dict)
+
 	assert game_dict["home_card_min_0"] == 83
-	assert game_dict["home_card_min_0"] == None
-	assert game_dict["home_card_min_0"] == None
+
 	assert game_dict["away_card_min_0"] == 63
-	assert game_dict["away_card_min_1"] == 63
+	assert game_dict["away_card_min_1"] == 66
 	assert game_dict["away_card_min_2"] == 67
+	assert game_dict["away_card_min_3"] == 70
 	
 	assert game_dict["home_card_clr_0"] == 2
-	assert game_dict["home_card_clr_1"] == None
-	assert game_dict["home_card_yllw"] == None
+
+	assert game_dict["home_card_yllw"] == 0
 	assert game_dict["home_card_red"] == 1
 
 	assert game_dict["away_card_clr_0"] == 1
 	assert game_dict["away_card_clr_1"] == 1
+	assert game_dict["away_card_clr_2"] == 3
+	assert game_dict["away_card_clr_3"] == 3
+
 	assert game_dict["away_card_yllw"] == 6
 	assert game_dict["away_card_red"] == 0
+
+	with pytest.raises(KeyError):
+		assert game_dict["home_card_min_1"] == None
+		assert game_dict["home_card_min_2"] == None
+		assert game_dict["home_card_min_3"] == None
+		assert game_dict["home_card_clr_1"] == None
+
+
+def test_player_name_and_url(get_game_soup):
+	game_dict = {}
+	game_dict = get_player_data(get_game_soup, game_dict)
+
+	assert game_dict["home_plyr_0"] == "Jüttemeier, Christopher"
+	assert game_dict["home_plyr_1"] == "Derksen, Lars"
+	assert game_dict["home_plyr_2"] == "Ohno, Takahito"
+	assert game_dict["home_plyr_3"] == "Dürscheid, Thomas"
+	assert game_dict["home_plyr_4"] == "Sarbo, Julian"
+	assert game_dict["home_plyr_5"] == "Klein, Tom-Luca"
+	assert game_dict["home_plyr_6"] == "Spiegel, Daniel"
+	assert game_dict["home_plyr_7"] == "Sanganaza, Mauriphile-Ekaba"
+	assert game_dict["home_plyr_8"] == "Pletto, Gero"
+	assert game_dict["home_plyr_9"] == "Reichling, Jeff"
+	assert game_dict["home_plyr_10"] == "Caspari, Stefan"
+
+	assert game_dict["away_plyr_0"] == "Salmen, Christian"
+	assert game_dict["away_plyr_1"] == "Wirsing, Philipp"
+	assert game_dict["away_plyr_2"] == "Krämer, Jan Luca"
+	assert game_dict["away_plyr_3"] == "Schwarz, Julian"
+	assert game_dict["away_plyr_4"] == "Ziegler, Thomas"
+	assert game_dict["away_plyr_5"] == "Bauerfeind, Ricardo"
+	assert game_dict["away_plyr_6"] == "Seinsche, Kilian"
+	assert game_dict["away_plyr_7"] == "Kelm, Daniel"
+	assert game_dict["away_plyr_8"] == "Henscheid, Jonas"
+	assert game_dict["away_plyr_9"] == "Barth, Tom"
+	assert game_dict["away_plyr_10"] == "Rüttgers, Christian"
+
+	# assert game_dict["home_plyr_url_1"] == 
+	# assert game_dict["home_plyr_url_2"] == 
+	# assert game_dict["home_plyr_url_3"] == 
+	# assert game_dict["home_plyr_url_4"] == 
+	# assert game_dict["home_plyr_url_5"] == 
+	# assert game_dict["home_plyr_url_6"] == 
+	# assert game_dict["home_plyr_url_7"] == 
+	# assert game_dict["home_plyr_url_8"] == 
+	# assert game_dict["home_plyr_url_9"] == 
+	# assert game_dict["home_plyr_url_10"] == 
+
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+	# assert game_dict["away_plyr_url_0"] ==
+
+def test_game_smmry_stats(get_game_soup):
+	game_dict = {}
+	game_dict = get_smmry_data(get_game_soup, game_dict)
+
+	assert game_dict["league"] == "Landesliga, St. 1"
+	assert game_dict["fb_date"] == "02.09.18"
+	assert game_dict["fb_time"] == "15:30"
+	assert game_dict["matchday"] == "2"
+	assert game_dict["result"] == "3:1"
+	assert game_dict["referee"] == "Scheffel, Thomas"
+
+	assert game_dict["home_team"] == "SC Borussia Lindenthal-Hohenlind"
+	assert game_dict["home_team_url"] == "https://www.fupa.net/club/sc-borussia-lindenthal-hohenlind/team/m1"
+	assert game_dict["home_club"] == "SC Borussia Lindenthal-Hohenlind"
+
+	assert game_dict["away_team"] == "SSV Homburg-Nümbrecht"
+	assert game_dict["away_team_url"] == "https://www.fupa.net/club/ssv-homburg-nuembrecht/team/m1"
+	assert game_dict["away_club"] == "SG Homburg-Nümbrecht/Elsenroth/Drabenderhöhe"

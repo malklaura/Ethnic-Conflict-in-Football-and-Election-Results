@@ -3,27 +3,19 @@
 
 def build(ctx):
 
-    # Illustrate simple use of run_py_script
+    # Tests
     ctx(
-        features='run_py_script',
-        source='get_simulation_draws.py',
-        target=ctx.path_to(ctx, 'OUT_DATA', 'initial_locations.csv'),
-        name='get_simulation_draws'
+        rule='pytest ../src/data_management --no-cov',
+        name='test_data_management',
     )
 
     ctx(
         features='run_py_script',
         source='final_merge.py',
         deps=[
-          	ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_final.csv'),
-         	ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_final.csv')
-            ],
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_final.csv'),
+            ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_final.csv')
+        ],
         target=ctx.path_to(ctx, 'OUT_DATA', 'master_file.csv'),
         name='final_merge'
-    )
-
-    # Tests
-    ctx(
-        rule='pytest ../src/data_management --no-cov',
-        name='test_data_management',
     )
