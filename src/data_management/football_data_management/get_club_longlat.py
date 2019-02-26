@@ -37,7 +37,7 @@ def get_geodata(home_club):
 
 if __name__ == '__main__':
 	# Open final football file csv.
-	final_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "football_combined.csv"))
+	final_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "games_combined.csv"))
 
 	# Get unique set of clubs for both home and away teams.
 	unique_home = final_df["home_club"].unique().tolist()

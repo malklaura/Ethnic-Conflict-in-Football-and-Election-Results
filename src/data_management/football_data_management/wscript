@@ -5,24 +5,24 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
-        source='get_scrapable_leagues.py',
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'matchday_data.csv'),
-        name='get_scrapable_leagues'
-    )
-
-    ctx(
-        features='run_py_script',
         source='get_matchday_data.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'matchday_data.csv'),
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'game_data.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'matchday_data.csv'),
         name='get_matchday_data'
     )
 
     ctx(
         features='run_py_script',
+        source='get_game_urls.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'matchday_data.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'game_urls.csv'),
+        name='get_game_urls'
+    )
+
+    ctx(
+        features='run_py_script',
         source='scrape_games.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'game_data.csv'),
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_combined.csv'),
+        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'game_urls.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_combined.csv'),
         name='scrape_games'
     )
 
@@ -36,28 +36,28 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
-        source='get_plyr_data.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_combined.csv'),
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'player_data.csv'),
-        name='get_plyr_data'
+        source='get_plyr_nationality.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_combined.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'plyr_nationality.csv'),
+        name='get_plyr_nationality'
     )
 
     ctx(
         features='run_py_script',
-        source='get_longlat_coords.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_combined.csv'),
+        source='get_club_longlat.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_combined.csv'),
         target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'club_longlat.csv'),
-        name='get_longlat_coords'
+        name='get_club_longlat'
     )
 
     ctx(
         features='run_py_script',
-        source='merge_plyr_data.py',
+        source='merge_games_plyr_longlat.py',
         deps=[
-            ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_combined.csv'),
+            ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_combined.csv'),
             ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'club_longlat.csv'),
-            ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'player_data.csv')
+            ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'plyr_nationality.csv')
         ],
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_final.csv'),
-        name='merge_plyr_data'
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_final.csv'),
+        name='merge_games_plyr_longlat'
     )

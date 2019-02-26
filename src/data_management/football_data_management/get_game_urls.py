@@ -67,4 +67,4 @@ if __name__ == '__main__':
 
     game_df = pd.concat(df_list) # Create df from df list.
     game_df = game_df.merge(league_df, on="mtchdy_url") # Merge to league data.
-    game_df.to_csv(ppj("OUT_DATA_FOOTBALL", "game_data.csv"), index=False) # Save as csv.
+    game_df.to_csv(ppj("OUT_DATA_FOOTBALL", "game_urls.csv"), index=False) # Save as csv.

@@ -5,7 +5,7 @@ from src.data_management.football_data_management.get_game_data import scrape_ga
 
 
 def main():
-    game_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "game_data.csv"))
+    game_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "game_urls.csv"))
 
     # Scraping.
     dict_list = []
@@ -15,7 +15,7 @@ def main():
 
     df = pd.DataFrame(dict_list)  # Dicts to dataframe.
     # Save as csv file.
-    df.to_csv(ppj("OUT_DATA_FOOTBALL", "football_combined.csv"), index=False)
+    df.to_csv(ppj("OUT_DATA_FOOTBALL", "games_combined.csv"), index=False)
 
 if __name__ == '__main__':
     main()

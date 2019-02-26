@@ -85,7 +85,7 @@ def get_age_nat(plyr_url):
 
 if __name__ == '__main__':
     # Read in final dataset, containing all games and player data.
-    game_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "football_combined.csv"))
+    game_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "games_combined.csv"))
     unique_plyrs = get_unique_plyrs(game_df)
 
     # Scraping via multiprocessing.
@@ -97,4 +97,4 @@ if __name__ == '__main__':
     plyr_df = pd.DataFrame(dict_list) # Dicts to df.
 
     # Save player url, age and nationality in seperate csv file.
-    plyr_df.to_csv(ppj("OUT_DATA_FOOTBALL", "player_data.csv"), index=False)
+    plyr_df.to_csv(ppj("OUT_DATA_FOOTBALL", "plyr_nationality.csv"), index=False)

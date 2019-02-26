@@ -52,13 +52,13 @@ def relative_nationality(df):
 
 if __name__ == '__main__':
     # Load game-, player- and geo-data
-    final_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "football_combined.csv"))
-    plyr_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "player_data.csv"))
+    games_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "games_combined.csv"))
+    plyr_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "plyr_nationality.csv"))
     longlat_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "club_longlat.csv"))
 
     # Merge all files to final csv.
     # Merge geo- and game data.
-    final_df = pd.merge(final_df, longlat_df, how='left', on='home_club')
+    final_df = pd.merge(games_df, longlat_df, how='left', on='home_club')
 
     # Merge geo-, gamedata on player nationality data.
     final_df = merge_nationality(final_df, plyr_df)
@@ -73,4 +73,4 @@ if __name__ == '__main__':
 
     # Save as .csv file.
     final_df.to_csv(
-        ppj("OUT_DATA_FOOTBALL", "football_final.csv"), index=False)
+        ppj("OUT_DATA_FOOTBALL", "games_final.csv"), index=False)
