@@ -39,7 +39,7 @@ def get_time_distance(final_df):
 if __name__ == '__main__':
     # Read in both final datasets, containing all election and football data.
     election_df = pd.read_csv(ppj("OUT_DATA_ELEC", "election_final.csv"))
-    football_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "football_final.csv"))
+    game_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "games_final.csv"))
 
     # Merge dataframes according to postal code and year column.
     final_df = pd.merge(election_df, football_df, left_on=[
@@ -61,4 +61,4 @@ if __name__ == '__main__':
         ['elec_off_name', 'elec_id']).mean().reset_index()
 
     # Save to csv.
-    final_df.to_csv(ppj("OUT_DATA", "master_file.csv"), index=False)
+    final_df.to_csv(ppj("OUT_DATA", "elections_games_final.csv"), index=False)
