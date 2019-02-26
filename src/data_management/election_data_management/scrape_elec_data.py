@@ -21,7 +21,7 @@ def main():
 
     # Create dataframe from dictionaries and save as csv.
     df = pd.DataFrame(dict_list)
-    df.to_csv(ppj("OUT_DATA_ELEC", "election_urls.csv"), index=False)
+    df.to_csv(ppj("OUT_DATA_ELEC", "election_data.csv"), index=False)
 
 if __name__ == '__main__':
     main()

@@ -96,4 +96,4 @@ if __name__ == '__main__':
     elec_df = elec_df[elec_df["scrapable"] == 1]
     elec_df.drop("scrapable",  axis=1, inplace=True)
 
-    elec_df.to_csv(ppj("OUT_DATA_ELEC", "election_mun.csv"), index=False)
+    elec_df.to_csv(ppj("OUT_DATA_ELEC", "scrapable_mun.csv"), index=False)

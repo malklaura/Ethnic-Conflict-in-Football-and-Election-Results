@@ -6,47 +6,47 @@ def build(ctx):
     ctx(
         features='run_py_script',
         source='get_scrapable_mun.py',
-        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'scrapable_mun.csv'),
         name='get_scrapable_mun'
     )
 
     ctx(
         features='run_py_script',
-        source='scrape_dwnld_urls.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
-        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_urls.csv'),
-        name='scrape_dwnld_urls'
+        source='get_elec_data.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'scrapable_mun.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_data.csv'),
+        name='get_elec_data'
     )
 
     ctx(
         features='run_py_script',
-        source='merge_election_files.py',
+        source='build_elec_id.py',
         deps=[
-            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
-            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_urls.csv')
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'scrapable_mun.csv'),
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_data.csv')
         ],
-        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun_urls.csv'),
-        name='merge_voting_df'
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_id_data.csv'),
+        name='build_elec_id'
     )
 
     ctx(
         features='run_py_script',
-        source='dwnld_election_files.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun_urls.csv'),
+        source='dwnld_elec_csv.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_id_data.csv'),
         target=[
             ctx.path_to(ctx, 'OUT_DATA_ELEC_CSV', 'election_dwnld_finished.txt'),
-            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_combined.csv')
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_combined.csv')
         ],
-        name='download_voting_files'
+        name='dwnld_elec_csv'
     )
 
     ctx(
         features='run_py_script',
-        source='get_longlat_coords.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_combined.csv'),
+        source='get_elec_off_longlat.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_combined.csv'),
         target=[
             ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elec_off_longlat.csv'),
-            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_final.csv')
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_final.csv')
         ],            
-        name='get_longlat_coords'
+        name='get_elec_off_longlat'
     )

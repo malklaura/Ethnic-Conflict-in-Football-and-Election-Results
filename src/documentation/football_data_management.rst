@@ -9,7 +9,7 @@ Documentation of the code in *src.data_management.football_data_management*.
 .. _get_matchday_data:
 Get matchday data
 ===========================
-Documentation of the code in *src.data_management.football_data_management.get_matchday_data*, which scrapes `FUPA <https://wahlen.votemanager.de/>`_ to return a dataframe containg all matchday-information and -urls for all amateur football games within NRW over the last ten years.
+Documentation of the code in *src.data_management.football_data_management.get_matchday_data*, which scrapes `fupa <https://fupa.net/>`_ to return a dataframe containg all matchday-information and -urls for all amateur football games within NRW over the last ten years. The resulting dataframe is stored in *bld.out.data.football_files.matchday_data.csv*.
 
 .. automodule:: src.data_management.football_data_management.get_matchday_data
     :members:

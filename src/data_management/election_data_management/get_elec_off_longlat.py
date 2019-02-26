@@ -81,7 +81,7 @@ def gmaps_elec_offices(srch_term):
 if __name__ == '__main__':
     # Read in combined election csv.
     elec_df = pd.read_csv(
-        ppj("OUT_DATA_ELEC", "election_combined.csv"))
+        ppj("OUT_DATA_ELEC", "elections_combined.csv"))
 
     # Election office name plus municipality name as search name.
     srch_term_list = get_srch_term_list(elec_df)
@@ -102,4 +102,4 @@ if __name__ == '__main__':
     elec_final_df = pd.merge(elec_df, long_lat_df,
                              how='left', on='srch_term')
     elec_final_df.to_csv(
-        ppj("OUT_DATA_ELEC", "election_final.csv"), index=False)
+        ppj("OUT_DATA_ELEC", "elections_final.csv"), index=False)

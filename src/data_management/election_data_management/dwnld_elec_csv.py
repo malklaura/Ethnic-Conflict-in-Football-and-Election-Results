@@ -73,7 +73,7 @@ def expand_voting_files(elec_master_df):
 
 if __name__ == '__main__':
     # Read in dataframe.
-    elec_master_df = pd.read_csv(ppj("OUT_DATA_ELEC", "election_mun_urls.csv"))
+    elec_master_df = pd.read_csv(ppj("OUT_DATA_ELEC", "election_id_data.csv"))
 
     # Download .csv files and get unique column names.
     colnames_list = expand_voting_files(elec_master_df)

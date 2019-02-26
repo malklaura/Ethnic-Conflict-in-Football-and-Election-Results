@@ -10,46 +10,53 @@ Documentation of the code in *src.data_management.election_data_management*.
 Get scrapable municipalties
 ===========================
 
-Documentation of the code in *src.data_management.election_data_management.get_scrapable_mun*, which returns scrapable municpalities from the `Votemanager Site <https://wahlen.votemanager.de/>`_.
+Documentation of the code in *src.data_management.election_data_management.get_scrapable_mun*, which returns scrapable municpalities from the `Votemanager site <https://wahlen.votemanager.de/>`_. The resulting dataframe is stored in *bld.out.data.election_files.scrapable_mun.csv*.
 
 .. automodule:: src.data_management.election_data_management.get_scrapable_mun
     :members: 
 
 
-.. _scrape_download_urls:
-Scrape download urls
+.. _get_elec_data:
+Get game data
+===========================
+Documentation of the code in *src.data_management.election_data_management.get_elec_data*, which scrapes relevant election information from a given municipal url and returns a game dictionary with the respective data. In particular, the download url for the lowest voting level is returned. 
+
+.. automodule:: src.data_management.election_data_management.get_elec_data
+    :members:
+
+
+.. _scrape_elec_data:
+Scrape election data
 ====================
-Documentation of the code in *src.data_management.election_data_management.scrape_dwnld_urls*, which returns a dataframe containing all election information for each municipality present in `Votemanager Site <https://wahlen.votemanager.de/>`_. In particular, this includes the download url for the csv file containing electionr results on the lowest voting level, i.e. election office. 
+Documentation of the code in *src.data_management.election_data_management.scrape_elec_data*, which uses *multiprocessing* and *src.data_management.election_data_management.get_elec_data* to scrape all election information from the scrapable municipal urls stored in *bld.out.data.election_files.scrapable_mun.csv*. The information are combined in a dataframe, which is store in *bld.out.data.election_files.election_data.csv*.
 
-.. automodule:: src.data_management.election_data_management.scrape_dwnld_urls
-    :members:
-
-.. automodule:: src.data_management.election_data_management.get_dwnld_urls
+.. automodule:: src.data_management.election_data_management.scrape_elec_data
     :members:
 
 
-.. _merge_election_files:
-Merge election files
+.. _build_election_id:
+Build election ID
 ====================
-Documentation of the code in *src.data_management.election_data_management.scrape_dwnld_urls*, which merges election information to municipality name.
-.. automodule:: src.data_management.election_data_management.merge_election_files
+Documentation of the code in *src.data_management.election_data_management.build_elec_id*, which create an unique ID for each election, which functions as file name. Also, the municipality name is merged to the election information. The resulting dataframe is stored in *bld.out.data.election_files.election_id_data.csv*.
+
+.. automodule:: src.data_management.election_data_management.build_elec_id
     :members:
 
 
-.. _download_election_csv_files:
+.. _download_election_csv:
 Download election CSV files
 ===========================
-Documentation of the code in *src.data_management.election_data_management.dwnld_election_files*, which downloads all csv stored in *bld.out.data.election_files.election_mun_urls.csv* to *bld.out.data.election_files.download_csv*. The code also combines all .csv files and appends relevant election information on the fly. The resulting dataframe is stored in *bld.out.data.election_files.election_combined.csv*.
+Documentation of the code in *src.data_management.election_data_management.dwnld_elec_csv*, which downloads all *.csv* files from the urls provided in *bld.out.data.election_files.election_id_data.csv*. The script also combines all *.csv* files and appends relevant election information on the fly. The resulting dataframe is stored in *bld.out.data.election_files.elections_combined.csv*.
 
-.. automodule:: src.data_management.election_data_management.dwnld_election_files
+.. automodule:: src.data_management.election_data_management.dwnld_elec_csv
     :members:
 
 
-.. _get_geodata_by_election_office:
-Get geodata by election office
+.. _get_election_office_geodata:
+Get election office geodata
 ==============================
-Documentation of the code in *src.data_management.election_data_management.get_longlat_coords*, which returns longitude, latitude data for each election office in the *bld.out.data.election_files.election_combined.csv* by doing a google maps search for each election office. The resulting dataframe is stored in *bld.out.data.election_files.election_final.csv*.
+Documentation of the code in *src.data_management.election_data_management.get_elec_off_longlat*, which returns longitude, latitude and postal code data for each election office in *bld.out.data.election_files.election_combined.csv* by doing a google maps search by election office and municipal name. The resulting data are stored in *bld.out.data.election_files.elec_off_longlat.csv*, while a merged version with the combined election results is stored in *bld.out.data.election_files.elections_final.csv*.
 
-.. automodule:: src.data_management.election_data_management.get_longlat_coords
+.. automodule:: src.data_management.election_data_management.get_elec_off_longlat
     :members:
 
