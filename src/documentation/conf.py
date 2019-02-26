@@ -180,7 +180,7 @@ latex_elements = {
     "papersize": "a4paper",
 
     # The font size ("10pt", "11pt" or "12pt").
-    "pointsize": "11pt",
+    "pointsize": "10pt",
 
     # Remove the "Release ..." subtitle from the LaTeX frontpage.
     "releasename": ""

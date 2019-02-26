@@ -6,8 +6,9 @@ from bld.project_paths import project_paths_join as ppj
 
 
 def get_geo_distance(final_df, index):
-    """This functions returns the kilometer distance between all matched football games and 
-    election offices, based on longitude and latitude data."""
+    """Returns the kilometer distance between the longitude latitude data
+    of a football club and and those of a election office. The returned distance is provided 
+    in kilometres."""
 
     # Compute geographic distance in kilometers using geopy package if possible
     # otherwise return np.nan.
@@ -20,8 +21,8 @@ def get_geo_distance(final_df, index):
 
 
 def get_time_distance(final_df):
-    """This functions returns the time disrance in days between all matched football games and 
-    election offices, based on the respective date columns"""
+    """Returns the time distance in days between matched matched football games and 
+    elections, based on the respective date columns"""
 
     # Get respective date columns into python date-format.
     final_df["elec_date"] = [datetime.strptime(

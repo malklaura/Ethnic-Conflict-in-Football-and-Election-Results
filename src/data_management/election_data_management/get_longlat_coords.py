@@ -29,7 +29,7 @@ def get_srch_term_list(elec_df):
 
 def clean_srch_term(srch_term):
     """This functions cleans the search term form unnecessary substrings
-    that could ivalidate the google maps search."""
+    that could invalidate the google maps search."""
 
     exclusion_dict = {"Briefwahl": "",
                       "Wahlbezirk": "",
