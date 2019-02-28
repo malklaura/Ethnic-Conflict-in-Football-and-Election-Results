@@ -2,31 +2,18 @@ Web Scraping of Election and Football Files from NRW
 ===================================================
 
 Introduction
-------------
+============
 
 This project deals with the web scraping of amateur football and election data from Germany. The project is meant to provide the data for a subsequent analysis of the effect of ethnic conflict in amateur football on subsequent election results. 
 
 In a first step both data are scraped from [fupa.net]_ and [wahlen.votemanager.de]_ respectively. The election dataset consists of election results by election office (~1,000 eligible voters), while the football dataset consists of individual games, including percentage data on the ethnic composition of each team and a measure of violence (sum of red and yellow cards per team). In a next step  game data are merged on election offices by postal and year data. For those matches time and geodata distance measures are computed. Observations are dropped when they lie outside a prespecified threshold, the remaining data are grouped by election office id and election. The final dataset is a panel indexed by election office and election with a meaned measure of ethnic composition and violence of time and geographic close football games.
 
 
-Background.. _introduction:
-************
-Introduction
-************
-
-Summary
-========
-This project deals with the web scraping of amateur football and election data from Germany. The project is meant to provide the data basis for a subsequent analysis of the effect of ethnic conflict in amateur football on subsequent election results. 
-
-In a first step both election and game data are scraped from `<https://wahlen.votemanager.de/>`_ and `<https://fupa.net/>`_ respectively. In a next step the datasets are augmented with longitude and latitude data from a google search query. Lastly, both datasets are merged by using time and geodata distance measures. The final dataset in as panel containing each election office (and the corresponding election results) as well as a measure of ehtnicity and violence constructed of all football games within a certain geographical and time distance of an election office. Right now the panel covers the state of NRW across the last ten years, although the script can easily be extended to include all german states as described in the *Project Extension* section.
-
 Waf template
-------------
 
 This project works with the waf enviroment provided by :cite:`GaudeckerEconProjectTemplates`. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_.  All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the language you are using particular language (see the section :ref:`project_paths` below).
 
 
-.. _installation:
 Installation
 ============
 
