@@ -26,14 +26,8 @@ To play with the project, clone the repository to your disk with
 
 .. code-block:: bash
 
-    $ git clone https://github.com/mmaeh/...
+    $ git clone https://github.com/mmaeh/Ethnic-Conflict-in-Football-and-Election-Results.git
 
-After that create an environment with ``conda`` and activate it by running
-
-.. code-block:: bash
-
-    $ conda env create -n sp -f environment.yml
-    $ activate sp
 
 Get prerequisites
 ------------------
@@ -75,10 +69,10 @@ After completing the above steps you can run the following two commands to start
 
 .. code-block:: bash
 
-    $ python waf.py configure distclean
+    $ python waf.py configure
     $ python waf.py build
 
-Be aware, that especially the google queries to get the geodata will take a lot of time. When the process is finished you find the merged dataset in *bld.out.final_data.elections_games_final.csv*.
+Be aware, that especially the google queries to get the geodata will take a lot of time, although running on multiprocessing. When the process is finished you find the merged dataset in *bld.out.final_data.elections_games_final.csv*.
 
 To generate this documentation and the .pdf presentation file run
 
