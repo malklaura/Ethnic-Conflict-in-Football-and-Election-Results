@@ -9,41 +9,84 @@ This project deals with the web scraping of amateur football and election data f
 In a first step both data are scraped from [fupa.net]_ and [wahlen.votemanager.de]_ respectively. The election dataset consists of election results by election office (~1,000 eligible voters), while the football dataset consists of individual games, including percentage data on the ethnic composition of each team and a measure of violence (sum of red and yellow cards per team). In a next step  game data are merged on election offices by postal and year data. For those matches time and geodata distance measures are computed. Observations are dropped when they lie outside a prespecified threshold, the remaining data are grouped by election office id and election. The final dataset is a panel indexed by election office and election with a meaned measure of ethnic composition and violence of time and geographic close football games.
 
 
-Background
-----------
-There exists a large literature on both ethnic conflict and 
-While there are a lot of papers analyzing the realtionship between migration and right-wing voting behaviour my framework relies on interaction between minorities and natives on the football court. The project builds on the idea of context dependenc in ethnic conflicts as described by Bordalo et al. 2016, i.e., that the stereotype of a target group depends on the characteristics of the reference group it is compared to. In this context decision makers overweight a group’s most distinctive characteristics compared to othes, when making predictions (stereotypes) about a group. 
+Background.. _introduction:
+************
+Introduction
+************
 
-This argument is in line with Glaeser 2005, who argues that the transition from from individual to group hatred requires two leaps. Other members of the victim’s group must both identify with the victim and must decide that all members of the aggressor’s group are guilty of the crime or are at least dangerous. My framework allows me to explicitly tests this hypothesis.
+Summary
+========
+This project deals with the web scraping of amateur football and election data from Germany. The project is meant to provide the data basis for a subsequent analysis of the effect of ethnic conflict in amateur football on subsequent election results. 
 
+In a first step both election and game data are scraped from `<https://wahlen.votemanager.de/>`_ and `<https://fupa.net/>`_ respectively. In a next step the datasets are augmented with longitude and latitude data from a google search query. Lastly, both datasets are merged by using time and geodata distance measures. The final dataset in as panel containing each election office (and the corresponding election results) as well as a measure of ehtnicity and violence constructed of all football games within a certain geographical and time distance of an election office. Right now the panel covers the state of NRW across the last ten years, although the script can easily be extended to include all german states as described in the *Project Extension* section.
 
-Installation
+Waf template
 ------------
+
+This project works with the waf enviroment provided by :cite:`GaudeckerEconProjectTemplates`. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_.  All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the language you are using particular language (see the section :ref:`project_paths` below).
+
+
+.. _installation:
+Installation
+============
+
+Clone repository
+-----------------
 
 To play with the project, clone the repository to your disk with
 
 .. code-block:: bash
 
-    $ git clone https://github.com/mmaeh/Term-Paper-Eff.-Programming-Maehr/
+    $ git clone https://github.com/mmaeh/Ethnic-Conflict-in-Football-and-Election-Results.git
 
-After that create an environment with ``conda`` and activate it by running
+
+Get prerequisites
+------------------
+
+Although the script is meant to run in one go, two external requirements are required before initializing the building process.
+
+GeckoDriver
+++++++++++++
+
+In a first step a recent version of the *GeckoDriver*, a WebDriver engine, is required. The scraping of the election data requires a browser automation framework, which is provided by *Selenium Python*, whichm requires such a WebDriver. The major advantage of using *GeckoDriver* as opposed to the default Firefox driver is the compatibility of *GeckoDriver* with the W3C WebDriver protocol to communicate with Selenium, which is a universally defined standard for WebDrivers. Recent versions of the driver are available on `<https://github.com/mozilla/geckodriver/releases>`_. **After downloading the appropriate version for your operating system, provide the path to the driver in *src.data_management.election_data_management.get_elec_mun.py* line *90***. 
+
+.. literalinclude:: ../../src/data_management/election_data_management/get_elec_mun.py
+    :lines: 88-92
+
+There are drivers for all major browsers, for their use see the documentation on `<https://selenium-python.readthedocs.io/installation.html>`_, however, the project is not tested for other WebDrivers.
+
+Google API key
++++++++++++++++
+
+Further, the collection of longitude and latitude data for football club and election office locations requires a *google API KEY*, to use google services on an automated scale. The key generation requires a google account and a sign up to googles cloud platform https://cloud.google.com/maps-platform/. The provided key allows for free monthly search queries of up to 300.00 USD, which should be more than sufficient for this project. Once your personal key is generated **you need to provide it in *src.data_management.election_data_management.get_elec_off_longlat.py* line *74* and in *src.data_management.football_data_management.get_club_longlat.py* line *17***.
+
+Python modules
+++++++++++++++++
+
+In a last step, make sure to install the following python modules if they are not already present on your machine::
+
+    pip install beautifulsoup4
+    pip install certifi
+    pip install geocoder
+    pip install multiprocessing
+    pip install selenium
+    pip install unidecode
+    pip install urllib3
+
+Build project
+---------------
+
+After completing the above steps you can run the following two commands to start the building process
 
 .. code-block:: bash
 
-    $ conda env create -n sp -f environment.yml
-    $ activate sp
-
-
-Then, run the following two commands to replicate the results.
-
-.. code-block:: bash
-
-    $ python waf.py configure distclean
+    $ python waf.py configure
     $ python waf.py build
 
+Be aware, that especially the google queries to get the geodata will take a lot of time, although running on multiprocessing. When the process is finished you find the merged dataset in *bld.out.final_data.elections_games_final.csv*.
 
-References
-----------
+To generate this documentation and the .pdf presentation file run
 
-.. [ELECTION] https://wahlen.votemanager.de/
-.. [FOOTBALL] https://www.fupa.net/
+.. code-block:: bash
+
+    $ python waf.py install
