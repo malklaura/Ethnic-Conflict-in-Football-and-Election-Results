@@ -1,5 +1,5 @@
 import pytest
-from src.data_management.election_data_management.get_dwnld_urls import scrape_elec_data
+from src.data_management.election_data_management.get_elec_data import scrape_elec_data
 
 
 def test_scrape_elec_data():

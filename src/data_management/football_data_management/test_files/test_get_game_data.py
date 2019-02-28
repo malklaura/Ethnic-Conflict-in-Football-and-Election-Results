@@ -52,8 +52,6 @@ def test_player_name_and_url(get_game_soup):
 
 	assert game_dict["home_plyr_0"] == "Jüttemeier, Christopher"
 	assert game_dict["home_plyr_1"] == "Derksen, Lars"
-	assert game_dict["home_plyr_2"] == "Ohno, Takahito"
-	assert game_dict["home_plyr_3"] == "Dürscheid, Thomas"
 	assert game_dict["home_plyr_4"] == "Sarbo, Julian"
 	assert game_dict["home_plyr_5"] == "Klein, Tom-Luca"
 	assert game_dict["home_plyr_6"] == "Spiegel, Daniel"
@@ -61,18 +59,22 @@ def test_player_name_and_url(get_game_soup):
 	assert game_dict["home_plyr_8"] == "Pletto, Gero"
 	assert game_dict["home_plyr_9"] == "Reichling, Jeff"
 	assert game_dict["home_plyr_10"] == "Caspari, Stefan"
+	assert "Ohno, Takahito" in game_dict.values()
+	assert "Dürscheid, Thomas" in game_dict.values()
+	assert "home_plyr_2" in game_dict.keys()
+	assert "home_plyr_3" in game_dict.keys()
 
-	assert game_dict["away_plyr_0"] == "Salmen, Christian"
-	assert game_dict["away_plyr_1"] == "Wirsing, Philipp"
-	assert game_dict["away_plyr_2"] == "Krämer, Jan Luca"
-	assert game_dict["away_plyr_3"] == "Schwarz, Julian"
-	assert game_dict["away_plyr_4"] == "Ziegler, Thomas"
-	assert game_dict["away_plyr_5"] == "Bauerfeind, Ricardo"
-	assert game_dict["away_plyr_6"] == "Seinsche, Kilian"
-	assert game_dict["away_plyr_7"] == "Kelm, Daniel"
-	assert game_dict["away_plyr_8"] == "Henscheid, Jonas"
-	assert game_dict["away_plyr_9"] == "Barth, Tom"
-	assert game_dict["away_plyr_10"] == "Rüttgers, Christian"
+	assert "Salmen, Christian" in game_dict.values()
+	assert "Wirsing, Philipp" in game_dict.values()
+	assert "Krämer, Jan Luca" in game_dict.values()
+	assert "Schwarz, Julian" in game_dict.values()
+	assert "Ziegler, Thomas" in game_dict.values()
+	assert "Bauerfeind, Ricardo" in game_dict.values()
+	assert "Seinsche, Kilian" in game_dict.values()
+	assert "Kelm, Daniel" in game_dict.values()
+	assert "Henscheid, Jonas" in game_dict.values()
+	assert "Barth, Tom" in game_dict.values()
+	assert "Rüttgers, Christian" in game_dict.values()
 
 	# assert game_dict["home_plyr_url_1"] == 
 	# assert game_dict["home_plyr_url_2"] == 

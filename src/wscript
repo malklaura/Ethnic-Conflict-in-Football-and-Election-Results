@@ -3,15 +3,15 @@
 
 def build(ctx):
     ctx.recurse('library')
-    ctx.recurse('data_management')
     ctx.recurse('data_management/election_data_management')
     ctx.recurse('data_management/football_data_management')
-    ctx.recurse('analysis')
-    ctx.recurse('final')
+    ctx.recurse('data_management')
+    #ctx.recurse('analysis')
+
     # Safety measure -- else the LaTeX scanner might fail because some
     # '.tex'-source file has not been generated.
     ctx.add_group()
-    ctx.recurse('paper')
+    #ctx.recurse('paper')
     ctx.recurse('documentation')
 
     # from src.final.project_dependency_graph import (

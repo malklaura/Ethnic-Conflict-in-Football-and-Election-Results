@@ -6,7 +6,7 @@ from bld.project_paths import project_paths_join as ppj
 
 def main():
     # Read in relevant files.
-    elec_mun_df = pd.read_csv(ppj("OUT_DATA_ELEC", "scrapable_mun.csv"))
+    elec_mun_df = pd.read_csv(ppj("OUT_DATA_ELEC", "election_mun.csv"))
     elec_url_df = pd.read_csv(ppj("OUT_DATA_ELEC", "election_data.csv"))
 
     # Merge files containing election and municipal information.

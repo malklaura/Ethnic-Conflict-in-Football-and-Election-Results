@@ -3,26 +3,32 @@
 
 def build(ctx):
 
+    # Tests
+    # ctx(
+    #     rule='pytest ../src/data_management/election_data_management --no-cov',
+    #     name='test_data_management',
+    # )
+
     ctx(
         features='run_py_script',
-        source='get_scrapable_mun.py',
-        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'scrapable_mun.csv'),
-        name='get_scrapable_mun'
+        source='get_elec_mun.py',
+        target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
+        name='get_elec_mun'
     )
 
     ctx(
         features='run_py_script',
-        source='get_elec_data.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'scrapable_mun.csv'),
+        source='scrape_elec_data.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
         target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_data.csv'),
-        name='get_elec_data'
+        name='scrape_elec_data'
     )
 
     ctx(
         features='run_py_script',
         source='build_elec_id.py',
         deps=[
-            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'scrapable_mun.csv'),
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_mun.csv'),
             ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_data.csv')
         ],
         target=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'election_id_data.csv'),
@@ -46,7 +52,8 @@ def build(ctx):
         deps=ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_combined.csv'),
         target=[
             ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elec_off_longlat.csv'),
-            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_final.csv')
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_final.csv'),
+            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_final_wo_postal.csv')
         ],            
         name='get_elec_off_longlat'
     )

@@ -3,6 +3,12 @@
 
 def build(ctx):
 
+    # Tests
+    # ctx(
+    #     rule='pytest ../src/data_management/football_data_management --no-cov',
+    #     name='test_data_management',
+    # )
+
     ctx(
         features='run_py_script',
         source='get_matchday_data.py',
@@ -20,10 +26,10 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
-        source='scrape_games.py',
+        source='scrape_game_data.py',
         deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'game_urls.csv'),
         target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_combined.csv'),
-        name='scrape_games'
+        name='scrape_game_data'
     )
 
     # ctx(

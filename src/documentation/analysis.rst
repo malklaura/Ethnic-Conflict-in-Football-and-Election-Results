@@ -1,16 +1,14 @@
 .. _analysis:
-
-************************
-Analysis
-************************
+****************
+Visual Analysis
+****************
 
 Documentation of the code in *src.analysis*.
 
-.. _get_scrapable_municipalties:
 Scatter ethnicity vs. card score
-===========================
+=================================
 
-Documentation of the code in *src.analysis.scatter_ethnicity_card_score*, which produces a scatter
+The code in *src.analysis.scatter_ethnicity_card_score* produces binned scatter plots of ethnicity vs. card score across all games in *bld.out.data.football_files.games_final.csv*. The card score is computed by summing up the measures for yellow and red cards. The resulting figures are stored in *bld.out.figures*.
 
-.. automodule:: src.data_management.analysis.scatter_ethnicity_card_score
+.. automodule:: src.analysis.scatter_ethnicity_card_score
     :members: 

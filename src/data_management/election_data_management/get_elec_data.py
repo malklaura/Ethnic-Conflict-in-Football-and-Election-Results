@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 
 def get_soup_object(url):
-    """This function returns a soup object from a given url."""
+    """Returns a soup object from a given url."""
     http = urllib3.PoolManager(
         cert_reqs='CERT_REQUIRED',
         ca_certs=certifi.where()
@@ -15,7 +15,7 @@ def get_soup_object(url):
 
 
 def get_elections_soup(mun_url):
-    """This function returns a soup object containing all elections
+    """Returns a soup object containing all elections
     obejects contained in the municipality url."""
     page_soup = get_soup_object(mun_url)
     elections_soup = page_soup.find_all("tr")[1:]
@@ -33,7 +33,7 @@ def get_elec_type_str(elec, elec_dict):
 
 
 def get_pssbl_elections(elec, mun_url, elec_dict):
-    """This function returns all elections that took place on a certain date.
+    """Returns all elections that took place on a certain date.
     The need for this function arises from the fact, that more than one election
     can take place on the same day and that some elections have the possibility
     of Erst- and Zweistimmen."""
@@ -47,8 +47,8 @@ def get_pssbl_elections(elec, mun_url, elec_dict):
 
 
 def get_voting_lvl(poss_election, elec_dict):
-    """For each election data are available for different aggregation levels.
-    I am only interested in the lowest (Wahlbüro) level."""
+    """Returns the class of all possible voting levels for a given
+    election, e.g., municipal or election office level."""
     sublvl_href = poss_election.a["href"]
     sublvl_url = elec_dict["elec_url"].rsplit(
         '/', 1)[0] + '/' + sublvl_href
@@ -62,7 +62,7 @@ def get_voting_lvl(poss_election, elec_dict):
 
 
 def get_dwnld_url(level, elec_abbrev, elec_dict):
-    """This function returns the download url for a given voting level."""
+    """Returns the download url for a given voting level."""
     level_href = level["href"]
     if "Erststimmen" in level_href:
         level_href = level_href.replace(
@@ -85,7 +85,8 @@ def get_dwnld_url(level, elec_abbrev, elec_dict):
 
 
 def get_elec_type_dict():
-    """Create dictionary of individual election type dictionaries."""
+    """Creates an election specific dictionary for each election,
+    that in turn are stored in an ecnompassing dictionary."""
 
     # Dictionary with relevant information for all considered elections.
     bw_dict = {"srch_trm": "Bundestag",
@@ -104,9 +105,9 @@ def get_elec_type_dict():
 
 
 def elec_type_check(elec, mun_url, elec_dict, elec_dict_list):
-    """This function checks, wheter a possible elections fulfills the requirements
-    of the elections we want to download. The specific requirements are stored in 
-    the elec_type dictionary."""
+    """This function checks, wheter a possible election object fulfills the requirements
+    specified in the election type dictionaries. If this is the case election information 
+    and corresponding download url are stored in a dictionary."""
 
     # Needed since there are occurrences of multiple elections on the same day.
     pssbl_elections = get_pssbl_elections(elec, mun_url, elec_dict)
@@ -140,7 +141,7 @@ def elec_type_check(elec, mun_url, elec_dict, elec_dict_list):
 
 def scrape_elec_data(mun_url):
     """Run web scraping process over all scrapable municipalities. In the end 
-    a dataframe containing all download urls is returned for those elections
+    a dataframe containing all download urls is returned for those all elections
     of interest."""
 
     # Append all election dictionaries to this list

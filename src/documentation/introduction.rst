@@ -1,74 +1,87 @@
 .. _introduction:
-
-
 ************
 Introduction
 ************
 
-This project deals with the web scraping of amateur football and election data from Germany. The project is meant to provide the data basis for a subsequent analysis of the effect of ethnic conflict in amateur football on preceding election results. 
+Summary
+========
+This project deals with the web scraping of amateur football and election data from Germany. The project is meant to provide the data basis for a subsequent analysis of the effect of ethnic conflict in amateur football on subsequent election results. 
 
-In a first step both data are scraped from `Votemanager Site <https://wahlen.votemanager.de/>`_ and `Fupa Site <https://fupa.net/>`_. In a next step both data are combined using time and geodata distance measures. The final file in as panel containing election results and a measure of ehtnicity and violence constructed of all football games within a certain geographical and time distance for each election office in NRW across the last ten years.
+In a first step both election and game data are scraped from `<https://wahlen.votemanager.de/>`_ and `<https://fupa.net/>`_ respectively. In a next step the datasets are augmented with longitude and latitude data from a google search query. Lastly, both datasets are merged by using time and geodata distance measures. The final dataset in as panel containing each election office (and the corresponding election results) as well as a measure of ehtnicity and violence constructed of all football games within a certain geographical and time distance of an election office. Right now the panel covers the state of NRW across the last ten years, although the script can easily be extended to include all german states as described in the *Project Extension* section.
 
-.. _getting_started:
+Waf template
+------------
 
-Getting started
-===============
-
-**This project works with the waf template provided by Gaudecker. To get accustomed with the workflow of the template I refer you to the documentation of the** `Waf Template <https://github.com/hmgaudecker/econ-project-templates/>`_
-
-The logic of this project works as follows: 
-
-..
-    1. Data management
-
-    1a. Election data management
-    1aa. Scraping of election download url
-    1ab. Get geodata for each election office
-
-    1b. Football data management
-    1ba. Scrape football game data
-    1bb. Scrape player ethnicity
-    1bc. Get geodata for each football club
-
-    2. Merge election and football files
-    3. Visualisation and results formatting
-    4. Compiling of research paper and documentation 
-
-Once you have done that, move your source data to **src/original_data/** and start filling up the actual steps of the project workflow (data management, analysis, final steps, paper). All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the language you are using particular language (see the section :ref:`project_paths` below).
+This project works with the waf enviroment provided by :cite:`GaudeckerEconProjectTemplates`. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_.  All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the language you are using particular language (see the section :ref:`project_paths` below).
 
 
-.. _project_paths:
+.. _installation:
+Installation
+============
 
-Project paths
-=============
+Clone repository
+-----------------
 
-A variety of project paths are defined in the top-level wscript file. These are exported to header files in other languages. So in case you require different paths (e.g. if you have many different datasets, you may want to have one path to each of them), adjust them in the top-level wscript file.
+To play with the project, clone the repository to your disk with
 
-The following is taken from the top-level wscript file. Modify any project-wide path settings there.
+.. code-block:: bash
 
-.. literalinclude:: ../../wscript
-    :start-after: out = "bld"
-    :end-before:     # Convert the directories into Waf nodes
+    $ git clone https://github.com/mmaeh/...
 
+After that create an environment with ``conda`` and activate it by running
 
-As should be evident from the similarity of the names, the paths follow the steps of the analysis in the :file:`src` directory:
+.. code-block:: bash
 
-..
-    1. **data_management** → **OUT_DATA**
-    1a. **election_data_management** → **OUT_DATA_ELEC** 
-    1b. **football_data_management** → **OUT_DATA_FOOTBALL**
-    2. **analysis** → **OUT_ANALYSIS**
-    3. **final** → **OUT_FINAL**, **OUT_FIGURES**, **OUT_TABLES**
+    $ conda env create -n sp -f environment.yml
+    $ activate sp
 
-These will re-appear in automatically generated header files by calling the ``write_project_paths`` task generator (just use an output file with the correct extension for the language you need -- ``.py``, ``.r``, ``.m``, ``.do``)
+Get prerequisites
+------------------
 
-By default, these header files are generated in the top-level build directory, i.e. ``bld``. The Python version defines a dictionary ``project_paths`` and a couple of convencience functions documented below. You can access these by adding a line::
+Although the script is meant to run in one go, two external requirements are required before initializing the building process.
 
-    from bld.project_paths import XXX
+GeckoDriver
+++++++++++++
 
-at the top of you Python-scripts. Here is the documentation of the module:
+In a first step a recent version of the *GeckoDriver*, a WebDriver engine, is required. The scraping of the election data requires a browser automation framework, which is provided by *Selenium Python*, whichm requires such a WebDriver. The major advantage of using *GeckoDriver* as opposed to the default Firefox driver is the compatibility of *GeckoDriver* with the W3C WebDriver protocol to communicate with Selenium, which is a universally defined standard for WebDrivers. Recent versions of the driver are available on `<https://github.com/mozilla/geckodriver/releases>`_. **After downloading the appropriate version for your operating system, provide the path to the driver in *src.data_management.election_data_management.get_elec_mun.py* line *90***. 
 
-    **bld.project_paths**
+.. literalinclude:: ../../src/data_management/election_data_management/get_elec_mun.py
+    :lines: 88-92
 
-    .. automodule:: bld.project_paths
-        :members:
+There are drivers for all major browsers, for their use see the documentation on `<https://selenium-python.readthedocs.io/installation.html>`_, however, the project is not tested for other WebDrivers.
+
+Google API key
++++++++++++++++
+
+Further, the collection of longitude and latitude data for football club and election office locations requires a *google API KEY*, to use google services on an automated scale. The key generation requires a google account and a sign up to googles cloud platform https://cloud.google.com/maps-platform/. The provided key allows for free monthly search queries of up to 300.00 USD, which should be more than sufficient for this project. Once your personal key is generated **you need to provide it in *src.data_management.election_data_management.get_elec_off_longlat.py* line *74* and in *src.data_management.football_data_management.get_club_longlat.py* line *17***.
+
+Python modules
+++++++++++++++++
+
+In a last step, make sure to install the following python modules if they are not already present on your machine::
+
+    pip install beautifulsoup4
+    pip install certifi
+    pip install geocoder
+    pip install multiprocessing
+    pip install selenium
+    pip install unidecode
+    pip install urllib3
+
+Build project
+---------------
+
+After completing the above steps you can run the following two commands to start the building process
+
+.. code-block:: bash
+
+    $ python waf.py configure distclean
+    $ python waf.py build
+
+Be aware, that especially the google queries to get the geodata will take a lot of time. When the process is finished you find the merged dataset in *bld.out.final_data.elections_games_final.csv*.
+
+To generate this documentation and the .pdf presentation file run
+
+.. code-block:: bash
+
+    $ python waf.py install

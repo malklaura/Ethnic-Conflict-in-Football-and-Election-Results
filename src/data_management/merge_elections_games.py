@@ -38,12 +38,12 @@ def get_time_distance(final_df):
 
 if __name__ == '__main__':
     # Read in both final datasets, containing all election and football data.
-    election_df = pd.read_csv(ppj("OUT_DATA_ELEC", "election_final.csv"))
+    election_df = pd.read_csv(ppj("OUT_DATA_ELEC", "elections_final.csv"))
     game_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "games_final.csv"))
 
     # Merge dataframes according to postal code and year column.
-    final_df = pd.merge(election_df, football_df, left_on=[
-                        "elec_postal", "elec_year"], right_on=["home_postal", "fb_year"])
+    election_df["elec_postal"] = pd.to_numeric(election_df["elec_postal"], errors='coerce')
+    final_df = pd.merge(election_df, game_df, left_on=["elec_postal", "elec_year"], right_on=["home_postal", "fb_year"])
 
     # Compute geodistance between election office and homeside football court as well as time distance
     # between election and game date for all merged rows.

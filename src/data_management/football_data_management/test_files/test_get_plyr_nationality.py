@@ -1,7 +1,7 @@
 import pytest
 import warnings
 import numpy as np
-from src.data_management.football_data_management.get_plyr_data import get_age_nat
+from src.data_management.football_data_management.get_plyr_nationality import get_age_nat
 
 
 def test_first_player():

@@ -1,6 +1,5 @@
 import csv
 import glob
-import re
 import pandas as pd
 from unidecode import unidecode
 from urllib.request import urlretrieve
@@ -12,10 +11,10 @@ def combine_voting_files(colnames_list):
     csv file by using a predefined list of all occuring columns."""
 
     inputs = [i for i in glob.glob(
-        ppj("OUT_DATA_ELEC_CSV", "*.{}".format('csv')))]
+        ppj("OUT_DATA_ELEC_CSV", "*.csv"))]
 
     # Write all csv files line by line to new combined csv file.
-    with open(ppj("OUT_DATA_ELEC", "election_combined.csv"), "w", newline="") as file_out:
+    with open(ppj("OUT_DATA_ELEC", "elections_combined.csv"), "w", newline="") as file_out:
         writer = csv.DictWriter(file_out, fieldnames=colnames_list)
         writer.writeheader()
         for filename in inputs:
@@ -56,15 +55,15 @@ def expand_voting_files(elec_master_df):
         temp_df["elec_year"] = elec_master_df.loc[i, "elec_year"]
         temp_df["elec_date"] = elec_master_df.loc[i, "elec_date"]
 
-        # Overwrite original csv file with with expanded columns.
-        temp_df.to_csv(
-            ppj("OUT_DATA_ELEC_CSV", '{}.csv'.format(file_name)), index=False)
-
         # Get columns of temp_df and append those to overall columns list.
         temp_columns = list(temp_df)
         for columns in temp_columns:
             if columns not in colnames_list:
                 colnames_list.append(columns)
+
+        # Overwrite original csv file with with expanded columns.
+        temp_df.to_csv(
+            ppj("OUT_DATA_ELEC_CSV", '{}.csv'.format(file_name)), index=False)
 
     # Create .txt file to indicate finshing of download process.
     open(ppj("OUT_DATA_ELEC_CSV", "election_dwnld_finished.txt"), 'a').close()

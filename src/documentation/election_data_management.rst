@@ -4,20 +4,20 @@
 Election data management
 ************************
 
-Documentation of the code in *src.data_management.election_data_management*.
+Documentation of the code in *src.data_management.election_data_management*. This part of the project compiles a dataset consisting of all election results on the election office level in NRW across the last ten years. The follow the hierarchial structure of the wscript file.
 
 .. _get_scrapable_municipalties:
 Get scrapable municipalties
 ===========================
 
-Documentation of the code in *src.data_management.election_data_management.get_scrapable_mun*, which returns scrapable municpalities from the `Votemanager site <https://wahlen.votemanager.de/>`_. The resulting dataframe is stored in *bld.out.data.election_files.scrapable_mun.csv*.
+Documentation of the code in *src.data_management.election_data_management.get_elec_mun*, which returns scrapable municpalities from the `<https://wahlen.votemanager.de/>`_. The resulting dataframe is stored in *bld.out.data.election_files.scrapable_mun.csv*.
 
-.. automodule:: src.data_management.election_data_management.get_scrapable_mun
+.. automodule:: src.data_management.election_data_management.get_elec_mun
     :members: 
 
 
 .. _get_elec_data:
-Get game data
+Get election data
 ===========================
 Documentation of the code in *src.data_management.election_data_management.get_elec_data*, which scrapes relevant election information from a given municipal url and returns a game dictionary with the respective data. In particular, the download url for the lowest voting level is returned. 
 
@@ -28,7 +28,7 @@ Documentation of the code in *src.data_management.election_data_management.get_e
 .. _scrape_elec_data:
 Scrape election data
 ====================
-Documentation of the code in *src.data_management.election_data_management.scrape_elec_data*, which uses *multiprocessing* and *src.data_management.election_data_management.get_elec_data* to scrape all election information from the scrapable municipal urls stored in *bld.out.data.election_files.scrapable_mun.csv*. The information are combined in a dataframe, which is store in *bld.out.data.election_files.election_data.csv*.
+Documentation of the code in *src.data_management.election_data_management.scrape_elec_data*, which uses *multiprocessing* and *src.data_management.election_data_management.get_elec_data* to scrape all election information from the scrapable municipal urls stored in *bld.out.data.election_files.scrapable_mun.csv*. The information are combined in a dataframe, which is stored in *bld.out.data.election_files.election_data.csv*.
 
 .. automodule:: src.data_management.election_data_management.scrape_elec_data
     :members:

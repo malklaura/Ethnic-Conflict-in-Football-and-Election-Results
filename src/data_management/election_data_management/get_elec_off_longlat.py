@@ -6,8 +6,9 @@ from bld.project_paths import project_paths_join as ppj
 
 
 def get_srch_term_list(elec_df):
-    """This functions returns a list containing all search terms needed for the
-    subsequent google search."""
+    """Returns a list containing all search terms needed for the subsequent 
+    google search. To this end the election office name is stripped from 
+    substrings and charachters that could invalidate the search."""
 
     # Get search term by combining municipal name and election office name.
     elec_df["srch_term"] = elec_df["mun_clearname"] + \
@@ -15,21 +16,25 @@ def get_srch_term_list(elec_df):
 
     # We want to exclude certain words from possible search terms, that could
     # invalidate the google query.
-    elec_df["srch_term"] = elec_df["srch_term"].str.replace(r"\(.*\)","")
+    elec_df["srch_term"] = elec_df["srch_term"].str.replace(r"\(.*\)", "")
     elec_df["srch_term"] = elec_df["srch_term"].str.replace("\d+", "")
     elec_df["srch_term"] = [clean_srch_term(x) for x in elec_df["srch_term"]]
-    elec_df["srch_term"] = elec_df["srch_term"].str.replace(r"\s\w\s","")
+    elec_df["srch_term"] = elec_df["srch_term"].str.replace(r"\s\w\s", "")
+
+    # Mark postal ballots.
+    elec_df["postal_vote"] = [postal_indicator(
+        x) for x in elec_df["elec_off_name"]]
 
     # Only use unique search terms and those which are not None.
     srch_term_list = elec_df["srch_term"].unique().tolist()
     srch_term_list = [x for x in srch_term_list if x is not None]
 
-    return srch_term_list[0:10]
+    return srch_term_list
 
 
 def clean_srch_term(srch_term):
-    """This functions cleans the search term form unnecessary substrings
-    that could invalidate the google maps search."""
+    """Cleans the search term form unnecessary substrings
+    that could invalidate the google search."""
 
     exclusion_dict = {"Briefwahl": "",
                       "Wahlbezirk": "",
@@ -46,10 +51,21 @@ def clean_srch_term(srch_term):
     return srch_term
 
 
+def postal_indicator(elec_off_name):
+    """Returns one if the election office name contains a keyword indicating
+    a postal ballot, otherwise zero."""
+
+    postal_keywords = ["Briefwahl", "Briefwahlbezirk"]
+    if any(key in elec_off_name for key in postal_keywords):
+        return 1
+    else:
+        return 0
+
+
 def gmaps_elec_offices(srch_term):
-    """This functions get longitude, latitude and postal code data from a
-    google maps search. For each search term a dictionary is initalized
-    and appended to a dataframe."""
+    """Gets longitude, latitude and postal code data from a
+    google maps search for a provided search term. For each search 
+    term a dictionary is returned."""
 
     # Dict and dataframe o store geo information.
     elec_off_dict = {"srch_term": srch_term}
@@ -103,3 +119,8 @@ if __name__ == '__main__':
                              how='left', on='srch_term')
     elec_final_df.to_csv(
         ppj("OUT_DATA_ELEC", "elections_final.csv"), index=False)
+
+    # Final data without postal ballots.
+    elec_final_df = elec_final_df[elec_final_df["postal_vote"] == 0]
+    elec_final_df.to_csv(
+        ppj("OUT_DATA_ELEC", "elections_final_wo_postal.csv"), index=False)

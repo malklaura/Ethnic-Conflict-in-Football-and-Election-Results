@@ -1,9 +1,9 @@
-'''Scrape download urls on election office level using multiprocessing.'''
+"""Scrape download urls on election office level using multiprocessing."""
 import itertools
 import pandas as pd
 import multiprocessing as mp
 from bld.project_paths import project_paths_join as ppj
-from src.data_management.election_data_management.get_dwnld_urls import scrape_elec_data
+from src.data_management.election_data_management.get_elec_data import scrape_elec_data
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
 
     # Multiprocessed scraping.
     with mp.Pool() as pool:
-        out = pool.map(scrape_elec_data, elec_df.mun_url.values)
+        out = pool.map(scrape_elec_data, elec_df.mun_url[0:5].values)
         out = list(itertools.chain.from_iterable(out))  # Flatten list.
         dict_list.extend(out)  # Extent dictionaries to list.
 

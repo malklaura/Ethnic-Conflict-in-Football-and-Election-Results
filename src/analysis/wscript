@@ -2,4 +2,14 @@
 
 
 def build(ctx):
-	pass
+
+    for team in ["home", "away"]:
+        for national in ["ger", "tur", "nonger"]:
+            ctx(
+                features='run_py_script',
+                source='scatter_ethnicity_card_score.py',
+                deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_final.csv'),
+                target=ctx.path_to(
+                    ctx, 'OUT_FIGURES', 'scatter_{}_perc_{}_card_score.png'.format(team, national)),
+                name='scatter_ethnicity_card_score'
+            )

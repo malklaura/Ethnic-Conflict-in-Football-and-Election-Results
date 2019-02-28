@@ -2,20 +2,14 @@
 
 
 def build(ctx):
-
-    # Tests
-    ctx(
-        rule='pytest ../src/data_management --no-cov',
-        name='test_data_management',
-    )
-
-    ctx(
-        features='run_py_script',
-        source='merge_elections_games.py',
-        deps=[
-            ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_final.csv'),
-            ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_final.csv')
-        ],
-        target=ctx.path_to(ctx, 'OUT_DATA', 'elections_games_final.csv'),
-        name='merge_elections_games'
-    )
+    pass
+    # ctx(
+    #     features='run_py_script',
+    #     source='merge_elections_games.py',
+    #     deps=[
+    #         ctx.path_to(ctx, 'OUT_DATA_ELEC', 'elections_final.csv'),
+    #         ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_final.csv')
+    #     ],
+    #     target=ctx.path_to(ctx, 'OUT_DATA', 'elections_games_final.csv'),
+    #     name='merge_elections_games'
+    # )
