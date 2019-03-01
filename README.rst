@@ -12,7 +12,7 @@ In a first step both data are scraped from [fupa.net]_ and [wahlen.votemanager.d
 Waf template
 -----------------
 
-This project works with the waf enviroment provided by :cite:`GaudeckerEconProjectTemplates`. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_.  All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the language you are using particular language (see the section :ref:`project_paths` below).
+This project works with the waf enviroment provided by [GaudeckerEconProjectTemplates]_. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_.  All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the language you are using particular language (see the section :ref:`project_paths` below).
 
 
 Installation
@@ -36,17 +36,14 @@ Although the script is meant to run in one go, two external requirements are req
 GeckoDriver
 ++++++++++++
 
-In a first step a recent version of the *GeckoDriver*, a WebDriver engine, is required. The scraping of the election data requires a browser automation framework, which is provided by *Selenium Python*, whichm requires such a WebDriver. The major advantage of using *GeckoDriver* as opposed to the default Firefox driver is the compatibility of *GeckoDriver* with the W3C WebDriver protocol to communicate with Selenium, which is a universally defined standard for WebDrivers. Recent versions of the driver are available on `<https://github.com/mozilla/geckodriver/releases>`_. **After downloading the appropriate version for your operating system, provide the path to the driver in *src.data_management.election_data_management.get_elec_mun.py* line *90***. 
-
-.. literalinclude:: ../../src/data_management/election_data_management/get_elec_mun.py
-    :lines: 88-92
+In a first step a recent version of the *GeckoDriver*, a WebDriver engine, is required. The scraping of the election data requires a browser automation framework, which is provided by *Selenium Python*, whichm requires such a WebDriver. The major advantage of using *GeckoDriver* as opposed to the default Firefox driver is the compatibility of *GeckoDriver* with the W3C WebDriver protocol to communicate with Selenium, which is a universally defined standard for WebDrivers. Recent versions of the driver are available on `<https://github.com/mozilla/geckodriver/releases>`_. After downloading the appropriate version for your operating system, provide the path to the driver in **src/data_management/election_data_management/get_elec_mun.py line 90**. 
 
 There are drivers for all major browsers, for their use see the documentation on `<https://selenium-python.readthedocs.io/installation.html>`_, however, the project is not tested for other WebDrivers.
 
 Google API key
 +++++++++++++++
 
-Further, the collection of longitude and latitude data for football club and election office locations requires a *google API KEY*, to use google services on an automated scale. The key generation requires a google account and a sign up to googles cloud platform https://cloud.google.com/maps-platform/. The provided key allows for free monthly search queries of up to 300.00 USD, which should be more than sufficient for this project. Once your personal key is generated **you need to provide it in *src.data_management.election_data_management.get_elec_off_longlat.py* line *74* and in *src.data_management.football_data_management.get_club_longlat.py* line *17***.
+Further, the collection of longitude and latitude data for football club and election office locations requires a *google API KEY*, to use google services on an automated scale. The key generation requires a google account and a sign up to googles cloud platform https://cloud.google.com/maps-platform/. The provided key allows for free monthly search queries of up to 300.00 USD, which should be more than sufficient for this project. Once your personal key is generated you need to provide it in **src/data_management/election_data_management/get_elec_off_longlat.py line 74** and in **src/data_management/football_data_management/get_club_longlat.py line 17**.
 
 Python modules
 ++++++++++++++++
