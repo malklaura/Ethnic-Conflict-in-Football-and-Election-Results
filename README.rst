@@ -70,7 +70,7 @@ After completing the above steps, you can run the following two commands to star
 
 Note that the first command only needs to be run once after cloning the repository. For subsequent buildings only the second command is required.
 
-Be aware, that especially the google queries to get the geodata will take much time, although running on multiprocessing. When the process is finished, you find the merged dataset in *bld.out.final_data.elections_games_final.csv*.
+Be aware, that especially the google queries to get the geodata will take much time, although running on multiprocessing. When the process is finished, you find the merged dataset in **bld/out/final_data/elections_games_final.csv**.
 
 To generate the project documentation and the .pdf presentation file additionally run
 
