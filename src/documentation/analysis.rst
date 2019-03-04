@@ -3,8 +3,6 @@
 Visual Analysis
 ****************
 
-Documentation of the code in *src.analysis*.
-
 Scatter ethnicity vs. card score
 =================================
 
