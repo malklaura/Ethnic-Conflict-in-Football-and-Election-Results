@@ -1,37 +1,42 @@
+import re
 import urllib3
 import certifi
-import re
-import glob
 import numpy as np
-import pandas as pd
+
 from bs4 import BeautifulSoup
 
 
 def scrape_game_data(game_url):
-    """This function loops through all game urls in a dataframe
-    and stores all relevant game data in the prespecified game 
-    dictionary and afterwards appends to the overall dataframe."""
+    """
+    Returns a dictionary containing all relevant game data 
+    from a prespecified game URL.
+    """
+    try:
+        http = urllib3.PoolManager(
+            cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
-    http = urllib3.PoolManager(
-        cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
+        # Get game soup object.
+        game_request = http.request("GET", game_url)
+        soup = BeautifulSoup(game_request.data, 'lxml')
 
-    # Get game soup object.
-    game_request = http.request("GET", game_url)
-    soup = BeautifulSoup(game_request.data, 'lxml')
+        # Store game data in dictionary.
+        game_dict = {"game_url": game_url}
+        game_dict = get_smmry_data(soup, game_dict)
+        game_dict = get_player_data(soup, game_dict)
+        game_dict = get_card_data(soup, game_dict)
 
-    # Store game data in dictionary.
-    game_dict = {"game_url": game_url}
-    game_dict = get_smmry_data(soup, game_dict)
-    game_dict = get_player_data(soup, game_dict)
-    game_dict = get_card_data(soup, game_dict)
-
-    return game_dict
+        return game_dict
+    except MaxRetryError:
+        pass
 
 
 def get_card_data(soup, game_dict):
-    """This function returns cards for both the home- and awaytime from a 
-    soup object and writes those information in the according matchday 
-    dataframe. I record card color, player name, and minute of foul."""
+    """
+    Returns cards for both the home- and away team from a 
+    soup object and writes that information in the corresponding 
+    game dictionary. Recorded are card color, player name, and 
+    minute of the card.
+    """
 
     try:
         # Get container storing card information.
@@ -48,6 +53,7 @@ def get_card_data(soup, game_dict):
             game_dict["{}_card_yllw".format(team)] = 0
             game_dict["{}_card_red".format(team)] = 0
 
+            # Get card color.
             game_dict = get_card_color(team_cards, game_dict, team)
 
     except AttributeError:
@@ -57,6 +63,10 @@ def get_card_data(soup, game_dict):
 
 
 def get_card_color(team_cards, game_dict, team):
+    """
+    Scrapes card color by team and continuously counts cards.
+    """
+
     # Loop through cards by team.
     for j, card in enumerate(team_cards):
         # Loop through all cards of respective team.
@@ -68,7 +78,7 @@ def get_card_color(team_cards, game_dict, team):
             game_dict["{}_card_plyr_{}".format(team, j)] = player
             game_dict["{}_card_min_{}".format(team, j)] = int(minute)
 
-            # Scrape card colors and contiuously count cards.
+            # Scrape card colors and count cards.
             if team_cards[j].div["style"] == "color:#FBDB04;":
                 game_dict["{}_card_clr_{}".format(team, j)] = 1  # yellow = 1
                 game_dict["{}_card_yllw".format(team)] += 1
@@ -92,10 +102,12 @@ def get_card_color(team_cards, game_dict, team):
 
 
 def get_player_data(soup, game_dict):
-    """This function returns player data for both the home- and awayteam
-    from a  soup object and writes those information in the according 
-    matchday dataframe. Besides player names, also corresponding player
-    urls are retrieved."""
+    """
+    Returns player data for both the home- and away team
+    from a soup object and writes that information in the respective 
+    game dictionary. Besides the player names, also the corresponding player
+    URLs are retrieved.
+    """
 
     # Loop through teams to store information by team.
     for i, team in enumerate(["home", "away"]):
@@ -118,9 +130,11 @@ def get_player_data(soup, game_dict):
 
 
 def get_smmry_data(soup, game_dict):
-    """Given a soup object this function returns the general game data,
+    """
+    Given a soup object, this function returns the general game data,
     ranging from date of the game, the result, the referee as well as the
-    name and url of both teams."""
+    name and URL of both teams.
+    """
 
     # Get date and time data.
     try:
@@ -164,7 +178,7 @@ def get_smmry_data(soup, game_dict):
             game_dict[team + "team"] = team_title[j].a["title"]
             game_dict[team + "team_url"] = team_title[j].a["href"]
             game_dict[team + "club"] = club_title[j]["title"]
-    except AttributeError:
+    except (AttributeError, TypeError):
         pass
 
     return game_dict

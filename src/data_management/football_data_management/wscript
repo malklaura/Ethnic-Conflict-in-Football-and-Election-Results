@@ -4,10 +4,10 @@
 def build(ctx):
 
     # Tests
-    # ctx(
-    #     rule='pytest ../src/data_management/football_data_management --no-cov',
-    #     name='test_data_management',
-    # )
+    ctx(
+        rule='pytest ../src/data_management/football_data_management --no-cov',
+        name='test_football_data_management',
+    )
 
     ctx(
         features='run_py_script',
@@ -28,17 +28,17 @@ def build(ctx):
         features='run_py_script',
         source='scrape_game_data.py',
         deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'game_urls.csv'),
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_combined.csv'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_CSV', 'scraping_finished.txt'),
         name='scrape_game_data'
     )
 
-    # ctx(
-    #     features='run_py_script',
-    #     source='merge_game_files.py',
-    #     deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_FINAL', 'game_scraping_finished.txt'),
-    #     target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'football_final.csv'),
-    #     name='merge_game_files'
-    # )
+    ctx(
+        features='run_py_script',
+        source='merge_game_files.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_CSV', 'scraping_finished.txt'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_combined.csv'),
+        name='merge_game_files'
+    )
 
     ctx(
         features='run_py_script',
