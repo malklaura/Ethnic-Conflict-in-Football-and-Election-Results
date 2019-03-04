@@ -1,6 +1,17 @@
 Web Scraping of Election and Football Files from NRW
 ===================================================
 
+Effective Programming Notes
+============================
+
+As mentioned below this project necessarily requires a Google API-Key to extract geodata from GoogleMaps. To properly evaluate this term paper my own API-Key is stored in the relevant scripts. However, because each key only allows for up to 300 USD of free use and each subsequent query is subject to a charge, the project in this version only extracts geodata for a really limited subset of election offices and football clubs, as can be seen in
+
+src/data_management/election_data_management/get_elec_off_longlat.py
+src/data_management/football_data_management/get_club_longlat.py
+
+Therefore, the resulting merged dataframe of both data sources is much smaller than theoretical possible. 
+
+
 Introduction
 ============
 
