@@ -2,28 +2,34 @@ import re
 import urllib3
 import certifi
 import pandas as pd
+
 from bs4 import BeautifulSoup
 from unidecode import unidecode
 from bld.project_paths import project_paths_join as ppj
 
 
 def get_soup_obj(url):
-    """Given an url this function returns the soup object, i.e., it gets
-    the page request and pulls the data out of HTML code, needed to
-    start the actual web scraping process."""
-    
+    """
+    Given an URL this function returns the soup object, i.e., it gets
+    the page request and pulls the data out of HTML code needed to
+    start the actual web scraping process.
+    """
+    http = urllib3.PoolManager(
+        cert_reqs='CERT_REQUIRED',
+        ca_certs=certifi.where())
+
     page_request = http.request("GET", url)
     soup = BeautifulSoup(page_request.data, 'lxml')
     return soup
 
 
 def get_district_list(region, main_url, matchday_dict):
-    """Given a region name and the main url this function finds all
-    districts within the region and constructs the corresponding url,
-    which in turn contain information about the leagues within the
-    district. Region name and url are stored in a matchday dict, that
-    is later appended to a dataframe containing all leagues across
-    all regions."""
+    """
+    Given a region name and the fupa URL this function finds all
+    districts within the region and constructs the corresponding URL. 
+    Region name and URL are stored in a matchday dict, that later is 
+    appended to a dataframe containing all leagues across all regions.
+    """
 
     # Get soup object from predefined regions.
     region_url = main_url + "/" + region
@@ -44,11 +50,12 @@ def get_district_list(region, main_url, matchday_dict):
     return districts_url_list
 
 
-def get_league_list(district_url, matchday_dict):
-    """Given an url this function returns the soup object, i.e., it gets 
-    the page request and pulls the data out of HTML code, needed to 
-    start the actual web scraping process."""
-    
+def get_league_list(district_url, matchday_dict, main_url):
+    """
+    Given a district level URL this function returns a list of the 
+    leagues URLs within the district.
+    """
+
     district_soup = get_soup_obj(district_url)
     district = district_soup.find(
         "td", {"class": "kreise_select"}).div.a.span.text
@@ -70,9 +77,11 @@ def get_league_list(district_url, matchday_dict):
 
 
 def get_seaons_list(league_url, matchday_dict):
-    """Given a league url this function returns a list, containing the
-    url of all past seasons of this league. League name and url are
-    stored in the matchday dictionary."""
+    """
+    Given a league url this function returns a list, containing the
+    URL of all past seasons of this league. League name and url are
+    stored in a matchday dictionary.
+    """
 
     # Get soup object for given league url.
     league_soup = get_soup_obj(league_url)
@@ -91,14 +100,15 @@ def get_seaons_list(league_url, matchday_dict):
     seasons_list = league_soup.find(
         "table", {"class": "liga_tabelle_archiv"})
     seasons_list = seasons_list.findAll("a")
-    return seasons_list
+    return seasons_list[0:5]
 
 
 def get_matchday_url(season, matchday_dict, matchday_df):
-    """Given the season url this function extracts the corresponding
-    matchday url, from which the actual scraping process starts. 
-    Further it saves information about the season in the matchday
-    dictionary, while also constructing an unqiue ID for each season.
+    """
+    Given a season URL this function extracts the corresponding
+    matchday URL, from which the actual scraping process starts. 
+    Further, it saves information about the season in the matchday
+    dictionary, while also constructing an unique ID for each season.
     """
 
     # Maybe just do this in the end for the ID string?
@@ -136,15 +146,11 @@ def get_matchday_url(season, matchday_dict, matchday_df):
 
     return matchday_df
 
-if __name__ == '__main__':
-    http = urllib3.PoolManager(
-        cert_reqs='CERT_REQUIRED',
-        ca_certs=certifi.where())
 
-    # Url to start from.
+def main():
+    # Main URL to start from.
     main_url = "https://www.fupa.net"
-    # Although data for all parts of Germany exist, in a first step I want to
-    # focus on those constituting NRW.
+    # Regions to scrap.
     regions = ["mittelrhein"]
     # regions = ["mittelrhein", "niederrhein", "ruhrgebiet", "westrhein"]
 
@@ -159,7 +165,7 @@ if __name__ == '__main__':
 
         # Loop through districts to get leagues within each district.
         for district_url in district_url_list:
-            leagues_url_list = get_league_list(district_url, matchday_dict)
+            leagues_url_list = get_league_list(district_url, matchday_dict, main_url)
 
             # Loop through each single league to get list of all past seasons
             # within a league.
@@ -174,3 +180,7 @@ if __name__ == '__main__':
 
     # Save matchday dataframe as .csv file.
     matchday_df.to_csv(ppj("OUT_DATA_FOOTBALL", "matchday_data.csv"))
+
+
+if __name__ == '__main__':
+    main()

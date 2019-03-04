@@ -2,13 +2,16 @@ import geocoder
 import numpy as np
 import pandas as pd
 import multiprocessing as mp
+
 from bld.project_paths import project_paths_join as ppj
 
 
 def get_srch_term_list(elec_df):
-    """Returns a list containing all search terms needed for the subsequent 
-    google search. To this end the election office name is stripped from 
-    substrings and charachters that could invalidate the search."""
+    """
+    Returns a list containing all search terms needed for the subsequent 
+    Google search. To this end, the election office name is stripped from 
+    substrings and characters that could invalidate the search.
+    """
 
     # Get search term by combining municipal name and election office name.
     elec_df["srch_term"] = elec_df["mun_clearname"] + \
@@ -33,39 +36,51 @@ def get_srch_term_list(elec_df):
 
 
 def clean_srch_term(srch_term):
-    """Cleans the search term form unnecessary substrings
-    that could invalidate the google search."""
+    """
+    Cleans the search term form substrings not helping to identify
+    the location of the election office and thereby invalidate the 
+    google search.
+    """
 
-    exclusion_dict = {"Briefwahl": "",
+    exclusion_dict = {"Briefwahlbezirk": "",
                       "Wahlbezirk": "",
                       "Stimmbezirk": "",
-                      "Briefwahlbezirk": "",
-                      "bezirk": "",
+                      "Briefwahl": "",
                       "Obere": "",
                       "Mittlere": "",
                       "Untere": ""}
 
     for word, replacement in exclusion_dict.items():
-        if word in srch_term:
-            return srch_term.replace(word, replacement)
+        try:
+            if word in srch_term:
+                return srch_term.replace(word, replacement)
+        except:
+            pass
     return srch_term
 
 
 def postal_indicator(elec_off_name):
-    """Returns one if the election office name contains a keyword indicating
-    a postal ballot, otherwise zero."""
+    """
+    Returns one if the election office name contains a keyword indicating
+    a postal ballot, otherwise zero.
+    """
 
     postal_keywords = ["Briefwahl", "Briefwahlbezirk"]
-    if any(key in elec_off_name for key in postal_keywords):
-        return 1
-    else:
-        return 0
+    try:
+        if any(key in elec_off_name for key in postal_keywords):
+            return 1
+        else:
+            return 0
+    except:
+        pass
 
 
 def gmaps_elec_offices(srch_term):
-    """Gets longitude, latitude and postal code data from a
+    """
+    Gets longitude, latitude and postal code data from a
     google maps search for a provided search term. For each search 
-    term a dictionary is returned."""
+    term a dictionary is returned.
+    """
 
     # Dict and dataframe o store geo information.
     elec_off_dict = {"srch_term": srch_term}
@@ -94,23 +109,23 @@ def gmaps_elec_offices(srch_term):
     return elec_off_dict
 
 
-if __name__ == '__main__':
+def main():
     # Read in combined election csv.
     elec_df = pd.read_csv(
-        ppj("OUT_DATA_ELEC", "elections_combined.csv"))
+        ppj("OUT_DATA_ELEC", "elections_combined.csv"),
+        low_memory=False)
 
     # Election office name plus municipality name as search name.
     srch_term_list = get_srch_term_list(elec_df)
-    print(srch_term_list)
 
     # Google maps search via multiprocessing.
     dict_list = []
     with mp.Pool() as pool:
-        out = pool.map(gmaps_elec_offices, srch_term_list)
+        out = pool.map(gmaps_elec_offices, srch_term_list[0:10])
         dict_list.extend(out)
 
-    long_lat_df = pd.DataFrame(dict_list)  # Dicts to dataframe.
-    print(long_lat_df)
+    # Dicts to dataframe.
+    long_lat_df = pd.DataFrame(dict_list)
     long_lat_df.to_csv(
         ppj("OUT_DATA_ELEC", "elec_off_longlat.csv"), index=False)
 
@@ -124,3 +139,7 @@ if __name__ == '__main__':
     elec_final_df = elec_final_df[elec_final_df["postal_vote"] == 0]
     elec_final_df.to_csv(
         ppj("OUT_DATA_ELEC", "elections_final_wo_postal.csv"), index=False)
+
+
+if __name__ == '__main__':
+    main()

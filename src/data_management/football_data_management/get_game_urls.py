@@ -4,12 +4,15 @@ import certifi
 import numpy as np
 import pandas as pd
 import multiprocessing as mp
+
 from bs4 import BeautifulSoup
 from bld.project_paths import project_paths_join as ppj
 
 
 def get_soup_obj(url):
-    """This function return the soup object from a given url."""
+    """
+    Returns the soup object from a given url.
+    """
 
     http = urllib3.PoolManager(
         cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
@@ -20,9 +23,11 @@ def get_soup_obj(url):
 
 
 def get_mtchdy_data(league_url):
-    """This function return the games for a given league url. Moreover, it is 
-    indicated wheter the respective game already took place and if not, when 
-    it will be played."""
+    """
+    Returns all game URLs for a given matchday URL. Moreover, it is 
+    indicated whether the respective game already took place and if not, when 
+    they will be played.
+    """
 
     # Get games soup.
     matchday_soup = get_soup_obj(league_url)
@@ -54,7 +59,7 @@ def get_mtchdy_data(league_url):
         pass
 
 
-if __name__ == '__main__':
+def main():
     # Load league data.
     league_df = pd.read_csv(
         ppj("OUT_DATA_FOOTBALL", "matchday_data.csv"), encoding='cp1252')
@@ -65,6 +70,13 @@ if __name__ == '__main__':
         out = pool.map(get_mtchdy_data, league_df.mtchdy_url.values)
         df_list.extend(out)
 
-    game_df = pd.concat(df_list) # Create df from df list.
-    game_df = game_df.merge(league_df, on="mtchdy_url") # Merge to league data.
-    game_df.to_csv(ppj("OUT_DATA_FOOTBALL", "game_urls.csv"), index=False) # Save as csv.
+    # Create df from df list.
+    game_df = pd.concat(df_list)
+
+    # Merge to league data and save as CSV.
+    game_df = game_df.merge(league_df, on="mtchdy_url")
+    game_df.to_csv(ppj("OUT_DATA_FOOTBALL", "game_urls.csv"), index=False)
+
+
+if __name__ == '__main__':
+    main()

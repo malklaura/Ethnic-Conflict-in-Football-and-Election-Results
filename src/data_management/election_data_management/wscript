@@ -4,10 +4,10 @@
 def build(ctx):
 
     # Tests
-    # ctx(
-    #     rule='pytest ../src/data_management/election_data_management --no-cov',
-    #     name='test_data_management',
-    # )
+    ctx(
+        rule='pytest ../src/data_management/election_data_management --no-cov',
+        name='test_elec_data_management',
+    )
 
     ctx(
         features='run_py_script',
