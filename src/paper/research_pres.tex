@@ -1,0 +1,106 @@
+\documentclass[11pt]{beamer}
+% \documentclass[11pt,handout]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{float, afterpage, rotating, graphicx}
+\usepackage{epstopdf}
+\usepackage{longtable, booktabs, tabularx}
+\usepackage{fancyvrb, moreverb, relsize}
+\usepackage{eurosym, calc}
+\usepackage{amsmath, amssymb, amsfonts, amsthm, bm} 
+
+
+\usepackage[
+    natbib=true,
+    bibencoding=inputenc,
+    bibstyle=authoryear-ibid,
+    citestyle=authoryear-comp,
+    maxcitenames=3,
+    maxbibnames=10,
+    useprefix=false,
+    sortcites=true,
+    backend=biber
+]{biblatex}
+\AtBeginDocument{\toggletrue{blx@useprefix}}
+\AtBeginBibliography{\togglefalse{blx@useprefix}}
+\setlength{\bibitemsep}{1.5ex}
+\addbibresource{refs.bib}
+
+\hypersetup{colorlinks=true, linkcolor=black, anchorcolor=black, citecolor=black, filecolor=black, menucolor=black, runcolor=black, urlcolor=black}
+
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{frametitle}{\centering\vspace{1ex}\insertframetitle\par}
+
+\title{Preliminary Evidence on the Effect of Ethnic Conflict in Football on Election Results}
+\author{Maximilian M\"ahr}
+\institute{University Bonn}
+\date{01. March 2019}
+
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\section{Descriptives on Nationality and Card Score}
+
+\begin{frame}{Reltionship between Nationality and Card Score}
+    \begin{itemize}
+        \item count player nationality by team
+        \item compute percentage 
+        $$perc_{j, k} = \frac{\text{\# nationality j in team k}}{\text{\# observations in team k}}$$
+        \item card score as sum of yellow and red cards
+        \item yellow card countes as one, red and yellow/red as two yellow cards
+    \end{itemize}
+\end{frame}
+ 
+\begin{frame}{Reltionship between Nationality and Card Score}
+    \begin{figure}
+        \caption{Scatter of percentage of Germans in home team vs. card score}
+        \includegraphics[width=0.9\textwidth]{../../out/figures/scatter_home_perc_ger_card_score}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Reltionship between Nationality and Card Score}
+    \begin{figure}
+        \caption{Scatter of percentage of Germans in away team vs. card score}
+        \includegraphics[width=0.9\textwidth]{../../out/figures/scatter_away_perc_ger_card_score}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Reltionship between Nationality and Card Score}
+    \begin{figure}
+        \caption{Scatter of percentage of Turks in home team vs. card score}
+        \includegraphics[width=0.9\textwidth]{../../out/figures/scatter_home_perc_tur_card_score}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Reltionship between Nationality and Card Score}
+    \begin{figure}
+        \caption{Scatter of percentage of Turks in home away vs. card score}
+        \includegraphics[width=0.9\textwidth]{../../out/figures/scatter_away_perc_tur_card_score}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Reltionship between Nationality and Card Score}
+    \begin{figure}
+        \caption{Scatter of percentage of Non-Germans in home team vs. card score}
+        \includegraphics[width=0.9\textwidth]{../../out/figures/scatter_home_perc_nonger_card_score}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Reltionship between Nationality and Card Score}
+    \begin{figure}
+        \caption{Scatter of percentage of Non-Germans in away team vs. card score}
+        \includegraphics[width=0.9\textwidth]{../../out/figures/scatter_away_perc_nonger_card_score}
+    \end{figure}
+\end{frame}
+
+\section{Effect of Interaction Nationality / Card Score on Election Results- Descriptives}
+
+\begin{frame}
+    Next Section
+\end{frame}
+
+\end{document}
