@@ -209,10 +209,7 @@ def test_game_smmry_stats(get_game_soup):
     assert game_dict['home_team'] == 'SC Borussia Lindenthal-Hohenlind'
     assert game_dict[
         'home_team_url'] == 'https://www.fupa.net/club/sc-borussia-lindenthal-hohenlind/team/m1'
-    assert game_dict['home_club'] == 'SC Borussia Lindenthal-Hohenlind'
 
     assert game_dict['away_team'] == 'SSV Homburg-Nümbrecht'
     assert game_dict[
         'away_team_url'] == 'https://www.fupa.net/club/ssv-homburg-nuembrecht/team/m1'
-    assert game_dict[
-        'away_club'] == 'SG Homburg-Nümbrecht/Elsenroth/Drabenderhöhe'
