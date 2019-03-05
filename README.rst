@@ -1,17 +1,6 @@
 Web Scraping of Election and Football Files from NRW
 ===================================================
 
-Effective Programming Notes
-============================
-
-As mentioned below this project necessarily requires a Google API-Key to extract geodata from GoogleMaps. To properly evaluate this term paper my own API-Key is stored in the relevant scripts. However, because each key only allows for up to 300 USD of free use and each subsequent query is subject to a charge, the project in this version only extracts geodata for a really limited subset of election offices and football clubs, as can be seen in
-
-src/data_management/election_data_management/get_elec_off_longlat.py
-src/data_management/football_data_management/get_club_longlat.py
-
-Therefore, the resulting merged dataframe of both data sources is much smaller than theoretical possible. 
-
-
 Introduction
 ============
 
@@ -24,6 +13,17 @@ Waf template
 -----------------
 
 This project works with the waf environment provided by `Gaudecker <https://github.com/hmgaudecker/econ-project-templates/>`_. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_.  All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the particular language you are using.
+
+
+!Effective Programming Version!
+================================
+
+As mentioned below this project requires a Google API-Key to extract geodata from GoogleMaps, which in turn requires the deposit of credit card information. To properly evaluate this term paper **my own API-Key** is stored in the relevant scripts. However, because the key only allows for up to 300 USD of free use and each subsequent query is subject to a charge, the project in this version only extracts geodata for a really limited subset of election offices and football clubs, as can be seen in
+
+1. **src/data_management/election_data_management/get_elec_off_longlat.py, line 35** and 
+2. **src/data_management/football_data_management/get_club_longlat.py, line 52**
+
+Therefore, the resulting merged dataframe of both data sources is much smaller than theoretical possible.
 
 
 Installation

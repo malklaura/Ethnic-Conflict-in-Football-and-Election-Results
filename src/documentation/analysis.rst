@@ -1,4 +1,5 @@
 .. _analysis:
+
 ****************
 Visual Analysis
 ****************
