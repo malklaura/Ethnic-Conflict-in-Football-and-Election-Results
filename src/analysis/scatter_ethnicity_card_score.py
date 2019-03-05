@@ -19,8 +19,7 @@ def bin_scatter_nat_card_score(df, team, nationality, bins):
     df['card_score'] = df['{}_card_yllw'.format(
         team)] + df['{}_card_red'.format(team)]
 
-    # Get bubble plot, indicating number of occurrences of nationality card
-    # scroe combination.
+    # Get bubble plot, to visualize count of national / card score combination.
     df['count'] = 1
     grouped_df = df.groupby(['{0}_{1}_perc'.format(
         team, nationality), 'card_score']).sum().reset_index()
@@ -29,7 +28,7 @@ def bin_scatter_nat_card_score(df, team, nationality, bins):
     bubble_count = grouped_df['count']
 
     # Get binned nationality and card score values.
-    perc_national = df["{0}_{1}_perc".format(team, nationality)].tolist()
+    perc_national = df['{0}_{1}_perc'.format(team, nationality)].tolist()
     card_score = df['card_score'].fillna(0).tolist()
 
     bin_y, bin_edges, binnumber = stats.binned_statistic(
@@ -45,18 +44,19 @@ def bin_scatter_nat_card_score(df, team, nationality, bins):
     plt.xlabel("Percentage of {} in {} team".format(nationality, team))
 
     # Save figure.
-    fig.savefig(ppj("OUT_FIGURES",
-                    "scatter_{}_perc_{}_card_score.png".format(team, nationality)))
+    fig.savefig(ppj('OUT_FIGURES',
+                    'scatter_{}_perc_{}_card_score.png'.format(team, nationality)))
 
 
 def main():
     # Read game data.
-    games_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "games_final.csv"))
+    games_df = pd.read_csv(
+        ppj('OUT_DATA_FOOTBALL', 'games_final.csv'), low_memory=False)
 
     # Loop through teams and nationality.
-    for team in ["home", "away"]:
-        for national in ["ger", "tur", "nonger"]:
-            bin_scatter_nat_card_score(games_df, team, national, bins=20)
+    for team in ['home', 'away']:
+        for national in ['ger', 'tur', 'nonger']:
+            bin_scatter_nat_card_score(games_df, team, national, bins=8)
 
 if __name__ == '__main__':
     main()
