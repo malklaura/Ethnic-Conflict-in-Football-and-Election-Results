@@ -1,4 +1,5 @@
 .. _extension:
+
 *****************
 Project Extension
 *****************

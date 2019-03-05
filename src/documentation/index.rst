@@ -13,4 +13,3 @@ Welcome to the Term Paper Effective Programming project's documentation!
     merging
     analysis
     extension
-    references

@@ -28,14 +28,16 @@ def build(ctx):
         features='run_py_script',
         source='scrape_game_data.py',
         deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'game_urls.csv'),
-        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_CSV', 'scraping_finished.txt'),
+        target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_CSV',
+                           'scraping_finished.txt'),
         name='scrape_game_data'
     )
 
     ctx(
         features='run_py_script',
         source='merge_game_files.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_CSV', 'scraping_finished.txt'),
+        deps=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL_CSV',
+                         'scraping_finished.txt'),
         target=ctx.path_to(ctx, 'OUT_DATA_FOOTBALL', 'games_combined.csv'),
         name='merge_game_files'
     )

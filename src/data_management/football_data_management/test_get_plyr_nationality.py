@@ -1,3 +1,5 @@
+"""Test player nationality crawler."""
+
 import pytest
 import numpy as np
 

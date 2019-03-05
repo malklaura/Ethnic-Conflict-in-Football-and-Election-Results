@@ -1,3 +1,5 @@
+"""Combine games on matchday level to combined file."""
+
 import csv
 import glob
 import pandas as pd

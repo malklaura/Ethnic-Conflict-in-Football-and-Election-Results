@@ -1,5 +1,8 @@
+"""Crawl election information by municipality."""
+
 import certifi
 import urllib3
+
 from bs4 import BeautifulSoup
 
 

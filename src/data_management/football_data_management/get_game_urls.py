@@ -1,3 +1,5 @@
+"""Crawl game URLs in matchday data."""
+
 import datetime
 import urllib3
 import certifi

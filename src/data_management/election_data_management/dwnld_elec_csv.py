@@ -1,16 +1,19 @@
+"""Download election CSV files and add election information."""
+
 import csv
 import glob
 import pandas as pd
+
 from unidecode import unidecode
 from urllib.request import urlretrieve
 from bld.project_paths import project_paths_join as ppj
 
 
 def combine_voting_files(colnames_list):
-    '''
+    """
     Combines all voting CSV files into a single CSV file by 
     using a predefined list of all occurring columns.
-    '''
+    """
 
     # All downloaded files.
     inputs = [i for i in glob.glob(
@@ -28,12 +31,12 @@ def combine_voting_files(colnames_list):
 
 
 def expand_voting_files(elec_master_df):
-    '''
+    """
     Downloads all CSV files from the corresponding download url. 
     Each file is expanded by columns containing ID, municipality 
     name, voting level, and state information. Further, a list 
     containing all occurring column names is created.
-    '''
+    """
 
     # List to store all column names.
     colnames_list = ['']

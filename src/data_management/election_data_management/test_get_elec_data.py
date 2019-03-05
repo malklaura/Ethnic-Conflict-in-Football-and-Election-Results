@@ -1,4 +1,7 @@
+"""Test election data crawler."""
+
 import pytest
+
 from src.data_management.election_data_management.get_elec_data import scrape_elec_data
 
 

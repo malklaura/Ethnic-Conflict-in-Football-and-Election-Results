@@ -1,3 +1,5 @@
+"""Crawl game data from game URL."""
+
 import re
 import urllib3
 import certifi

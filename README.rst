@@ -1,5 +1,5 @@
 Web Scraping of Election and Football Files from NRW
-===================================================
+=====================================================
 
 Introduction
 ============
@@ -12,7 +12,7 @@ In a first step, both data are scraped from `<https://fupa.net>`_ and `<https://
 Waf template
 -----------------
 
-This project works with the waf environment provided by `Gaudecker <https://github.com/hmgaudecker/econ-project-templates/>`_. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_.  All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the particular language you are using.
+This project works with the waf environment provided by `Gaudecker <https://github.com/hmgaudecker/econ-project-templates/>`_. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_. All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the particular language you are using.
 
 
 !Effective Programming Version!
@@ -25,6 +25,9 @@ As mentioned below this project requires a Google API-Key to extract geodata fro
 
 Therefore, the resulting merged dataframe of both data sources is much smaller than theoretical possible.
 
+Also, note that a **current version of the GeckoDriver corresponding to your operating system is needed**. For further details see the prerequisites section below.
+
+Finally, to save computing time football game data are only crawled for the last five seasons. To lift this restriction simply remove the list constraint in **src/data_management/football_data_management/get_matchday_data.py, line 109**.
 
 Installation
 ============
@@ -47,14 +50,14 @@ Although the script is meant to run in one go, two external requirements are req
 GeckoDriver
 ++++++++++++
 
-In a first step a recent version of the *GeckoDriver*, a WebDriver engine, is required. The scraping of the election data requires a browser automation framework, which is provided by *Selenium Python*, which requires such a WebDriver. The major advantage of using *GeckoDriver* as opposed to the default Firefox driver is the compatibility of *GeckoDriver* with the W3C WebDriver protocol to communicate with Selenium, which is a universally defined standard for WebDrivers. Recent versions of the driver are available on `<https://github.com/mozilla/geckodriver/releases>`_. After downloading the appropriate version for your operating system, provide the path to the driver in **src/data_management/election_data_management/get_elec_mun.py line 90**. 
+In a first step a recent version of the *GeckoDriver*, a WebDriver engine, is required. The scraping of the election data requires a browser automation framework, which is provided by *Selenium Python*, which requires such a WebDriver. The major advantage of using *GeckoDriver* as opposed to the default Firefox driver is the compatibility of *GeckoDriver* with the W3C WebDriver protocol to communicate with Selenium, which is a universally defined standard for WebDrivers. Recent versions of the driver are available on `<https://github.com/mozilla/geckodriver/releases>`_. After downloading the appropriate version for your operating system, provide the path to the driver in **src/data_management/election_data_management/get_elec_mun.py line 103**. 
 
 There are drivers for all major browsers, for their use see the documentation on `<https://selenium-python.readthedocs.io/installation.html>`_. However, the project is not tested for other WebDrivers.
 
 Google API key
 +++++++++++++++
 
-Further, the collection of longitude and latitude data for the football club and election office locations requires a *google API KEY*, to use google services on an automated scale. The key generation requires a google account and a sign up to googles cloud platform https://cloud.google.com/maps-platform/. The provided key allows for free monthly search queries of up to 300.00 USD, which should be more than sufficient for this project. Once your personal key is generated you need to provide it in **src/data_management/election_data_management/get_elec_off_longlat.py line 74** and in **src/data_management/football_data_management/get_club_longlat.py line 17**.
+Further, the collection of longitude and latitude data for the football club and election office locations requires a *google API KEY*, to use google services on an automated scale. The key generation requires a google account and a sign up to googles cloud platform https://cloud.google.com/maps-platform/. The provided key allows for free monthly search queries of up to 300.00 USD, which should be more than sufficient for this project. Once your personal key is generated you need to provide it in **src/data_management/election_data_management/get_elec_off_longlat.py line 89** and in **src/data_management/football_data_management/get_club_longlat.py line 20**.
 
 Python modules
 ++++++++++++++++
@@ -89,3 +92,27 @@ To generate the project documentation and the .pdf presentation file additionall
 
     $ python waf.py install
 
+
+Project Structure
+==================
+
+The logic of this project works according to the following hierarchic structure:
+
+1. Election data management
+    a. Determination of scrapable municipalties
+    b. Scrape election information and download url of election results
+    c. Download election .csv files and combine to one .csv file
+    d. Get geodata for each election office in combined .csv file
+2. Football data management
+    a. Get data of all leagues present in `<https://fupa.net/>`_
+    b. Get dataframe of all game urls within those leagues
+    c. Scrape football game data for each game and store in separate matchday CSV files
+    d. Merge CSV files from c. to one combined file.
+    e. Scrape player ethnicity from player urls
+    f. Get geodata for each football club
+    g. Merge e. and f. to d.
+3. Merge election and football files
+4. Visualisation of results
+5. Compile sample presentation and documentation 
+
+Note that this structure just gives a rough intuition behind the steps executed in the building process. In the actual building several scripts will be run simultaneously. The dependencies of each file is determined thorugh the the top-level wscript files, stored in the separate folders of the *src* part.

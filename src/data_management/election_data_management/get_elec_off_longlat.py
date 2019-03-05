@@ -1,3 +1,5 @@
+"""Get geodata for each unique election office."""
+
 import geocoder
 import numpy as np
 import pandas as pd
@@ -14,25 +16,25 @@ def get_srch_term_list(elec_df):
     """
 
     # Get search term by combining municipal name and election office name.
-    elec_df["srch_term"] = elec_df["mun_clearname"] + \
-        " " + elec_df["elec_off_name"]
+    elec_df['srch_term'] = elec_df['mun_clearname'] + \
+        ' ' + elec_df['elec_off_name']
 
     # We want to exclude certain words from possible search terms, that could
     # invalidate the google query.
-    elec_df["srch_term"] = elec_df["srch_term"].str.replace(r"\(.*\)", "")
-    elec_df["srch_term"] = elec_df["srch_term"].str.replace("\d+", "")
-    elec_df["srch_term"] = [clean_srch_term(x) for x in elec_df["srch_term"]]
-    elec_df["srch_term"] = elec_df["srch_term"].str.replace(r"\s\w\s", "")
+    elec_df['srch_term'] = elec_df['srch_term'].str.replace(r'\(.*\)', '')
+    elec_df['srch_term'] = elec_df['srch_term'].str.replace('\d+', '')
+    elec_df['srch_term'] = [clean_srch_term(x) for x in elec_df['srch_term']]
+    elec_df['srch_term'] = elec_df['srch_term'].str.replace(r'\s\w\s', '')
 
     # Mark postal ballots.
-    elec_df["postal_vote"] = [postal_indicator(
-        x) for x in elec_df["elec_off_name"]]
+    elec_df['postal_vote'] = [postal_indicator(
+        x) for x in elec_df['elec_off_name']]
 
     # Only use unique search terms and those which are not None.
-    srch_term_list = elec_df["srch_term"].unique().tolist()
+    srch_term_list = elec_df['srch_term'].unique().tolist()
     srch_term_list = [x for x in srch_term_list if x is not None]
 
-    return srch_term_list[0:200]  # !!Subset!!
+    return srch_term_list[0:1500]  # !!Subset!!
 
 
 def clean_srch_term(srch_term):
@@ -42,13 +44,13 @@ def clean_srch_term(srch_term):
     google search.
     """
 
-    exclusion_dict = {"Briefwahlbezirk": "",
-                      "Wahlbezirk": "",
-                      "Stimmbezirk": "",
-                      "Briefwahl": "",
-                      "Obere": "",
-                      "Mittlere": "",
-                      "Untere": ""}
+    exclusion_dict = {'Briefwahlbezirk': '',
+                      'Wahlbezirk': '',
+                      'Stimmbezirk': '',
+                      'Briefwahl': '',
+                      'Obere': '',
+                      'Mittlere': '',
+                      'Untere': ''}
 
     for word, replacement in exclusion_dict.items():
         try:
@@ -65,7 +67,7 @@ def postal_indicator(elec_off_name):
     a postal ballot, otherwise zero.
     """
 
-    postal_keywords = ["Briefwahl", "Briefwahlbezirk"]
+    postal_keywords = ['Briefwahl', 'Briefwahlbezirk']
     try:
         if any(key in elec_off_name for key in postal_keywords):
             return 1
@@ -83,28 +85,28 @@ def gmaps_elec_offices(srch_term):
     """
 
     # Dict and dataframe o store geo information.
-    elec_off_dict = {"srch_term": srch_term}
+    elec_off_dict = {'srch_term': srch_term}
 
     # Get coordinates for search term.
-    key = "AIzaSyCfFTBllwpO1fIkKbUvduBDyo_WXXxAFZE"
+    key = 'AIzaSyCfFTBllwpO1fIkKbUvduBDyo_WXXxAFZE'
     geo = geocoder.google(srch_term, key=key)
 
     # Store longitude, latitude, postal code and locality in
     # prespecified dictionary.
     try:
-        elec_off_dict["elec_lat"] = geo.latlng[0]
-        elec_off_dict["elec_long"] = geo.latlng[1]
+        elec_off_dict['elec_lat'] = geo.latlng[0]
+        elec_off_dict['elec_long'] = geo.latlng[1]
     except:
-        elec_off_dict["elec_lat"] = np.nan
-        elec_off_dict["elec_long"] = np.nan
+        elec_off_dict['elec_lat'] = np.nan
+        elec_off_dict['elec_long'] = np.nan
 
     # Also try to get postal code and locality name.
     try:
-        elec_off_dict["elec_postal"] = geo.postal
-        elec_off_dict["elec_locality"] = geo.locality
+        elec_off_dict['elec_postal'] = geo.postal
+        elec_off_dict['elec_locality'] = geo.locality
     except:
-        elec_off_dict["elec_postal"] = np.nan
-        elec_off_dict["elec_locality"] = np.nan
+        elec_off_dict['elec_postal'] = np.nan
+        elec_off_dict['elec_locality'] = np.nan
 
     return elec_off_dict
 
@@ -112,7 +114,7 @@ def gmaps_elec_offices(srch_term):
 def main():
     # Read in combined election csv.
     elec_df = pd.read_csv(
-        ppj("OUT_DATA_ELEC", "elections_combined.csv"),
+        ppj('OUT_DATA_ELEC', 'elections_combined.csv'),
         low_memory=False)
 
     # Election office name plus municipality name as search name.
@@ -121,24 +123,24 @@ def main():
     # Google maps search via multiprocessing.
     dict_list = []
     with mp.Pool() as pool:
-        out = pool.map(gmaps_elec_offices, srch_term_list[0:10])
+        out = pool.map(gmaps_elec_offices, srch_term_list)
         dict_list.extend(out)
 
     # Dicts to dataframe.
     long_lat_df = pd.DataFrame(dict_list)
     long_lat_df.to_csv(
-        ppj("OUT_DATA_ELEC", "elec_off_longlat.csv"), index=False)
+        ppj('OUT_DATA_ELEC', 'elec_off_longlat.csv'), index=False)
 
     # Merge latitude and longitude data to combined election csv.
     elec_final_df = pd.merge(elec_df, long_lat_df,
                              how='left', on='srch_term')
     elec_final_df.to_csv(
-        ppj("OUT_DATA_ELEC", "elections_final.csv"), index=False)
+        ppj('OUT_DATA_ELEC', 'elections_final.csv'), index=False)
 
     # Final data without postal ballots.
-    elec_final_df = elec_final_df[elec_final_df["postal_vote"] == 0]
+    elec_final_df = elec_final_df[elec_final_df['postal_vote'] == 0]
     elec_final_df.to_csv(
-        ppj("OUT_DATA_ELEC", "elections_final_wo_postal.csv"), index=False)
+        ppj('OUT_DATA_ELEC', 'elections_final_wo_postal.csv'), index=False)
 
 
 if __name__ == '__main__':

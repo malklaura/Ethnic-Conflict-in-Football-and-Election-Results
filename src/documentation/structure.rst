@@ -1,4 +1,5 @@
 .. _project_structure:
+
 *****************
 Project Structure
 *****************
@@ -16,9 +17,11 @@ The logic of this project works according to the following hierarchic structure:
 2. Football data management
     a. Get data of all leagues present in `<https://fupa.net/>`_
     b. Get dataframe of all game urls within those leagues
-    c. Scrape football game data for each game
-    d. Scrape player ethnicity from player urls
-    e. Get geodata for each football club
+    c. Scrape football game data for each game and store in separate matchday CSV files
+    d. Merge CSV files from c. to one combined file.
+    e. Scrape player ethnicity from player urls
+    f. Get geodata for each football club
+    g. Merge e. and f. to d.
 3. Merge election and football files
 4. Visualisation of results
 5. Compile sample presentation and documentation 

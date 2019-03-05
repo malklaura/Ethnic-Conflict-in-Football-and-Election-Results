@@ -1,3 +1,5 @@
+"""Creates and appends election ID for each election."""
+
 import re
 import pandas as pd
 

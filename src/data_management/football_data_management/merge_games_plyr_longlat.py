@@ -1,5 +1,8 @@
+"""Merge geodata and player nationalities to game data."""
+
 import pandas as pd
 import numpy as np
+
 from bld.project_paths import project_paths_join as ppj
 
 
@@ -14,13 +17,13 @@ def merge_nationality(final_df, plyr_df):
 
     # Loop through all player URL columns and match player nationality by url.
     for col in plyr_url_col:
-        final_df = pd.merge(final_df, plyr_df[["url", "nat"]],  how='left',
+        final_df = pd.merge(final_df, plyr_df[['url', 'nat']],  how='left',
                             left_on=str(col), right_on='url')
         final_df.drop('url', axis=1, inplace=True)
 
         # Match nationality to player.
-        nat_colname = str(col).replace("url", "nat")
-        final_df.rename(columns={"nat": nat_colname}, inplace=True)
+        nat_colname = str(col).replace('url', 'nat')
+        final_df.rename(columns={'nat': nat_colname}, inplace=True)
 
     return final_df
 
@@ -32,7 +35,7 @@ def relative_nationality(df):
     """
 
     # Loop through teams.
-    for team in ["home", "away"]:
+    for team in ['home', 'away']:
         # Columns containing nationality information by team.
         nat_col = [col for col in df if '{}_plyr_nat'.format(team) in col]
 
@@ -48,23 +51,24 @@ def relative_nationality(df):
         perc_nonger = n_nonger / n_obs_total
 
         # To dataframe.
-        df["{}_ger".format(team)] = n_ger
-        df["{}_tur".format(team)] = n_tur
-        df["{}_nan".format(team)] = n_nan
-        df["{}_nonger".format(team)] = n_nonger
-        df["{}_obs_total".format(team)] = n_obs_total
-        df["{}_ger_perc".format(team)] = perc_ger
-        df["{}_tur_perc".format(team)] = perc_tur
-        df["{}_nonger_perc".format(team)] = perc_nonger
+        df['{}_ger'.format(team)] = n_ger
+        df['{}_tur'.format(team)] = n_tur
+        df['{}_nan'.format(team)] = n_nan
+        df['{}_nonger'.format(team)] = n_nonger
+        df['{}_obs_total'.format(team)] = n_obs_total
+        df['{}_ger_perc'.format(team)] = perc_ger
+        df['{}_tur_perc'.format(team)] = perc_tur
+        df['{}_nonger_perc'.format(team)] = perc_nonger
 
     return df
 
 
 def main():
     # Load game-, player- and geo-data
-    games_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "games_combined.csv"))
-    plyr_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "plyr_nationality.csv"))
-    longlat_df = pd.read_csv(ppj("OUT_DATA_FOOTBALL", "club_longlat.csv"))
+    plyr_df = pd.read_csv(ppj('OUT_DATA_FOOTBALL', 'plyr_nationality.csv'))
+    longlat_df = pd.read_csv(ppj('OUT_DATA_FOOTBALL', 'club_longlat.csv'))
+    games_df = pd.read_csv(
+        ppj('OUT_DATA_FOOTBALL', 'games_combined.csv'), low_memory=False)
 
     # Merge all files to final csv.
     # Merge geo- and game data.
@@ -79,12 +83,12 @@ def main():
     # Split date into day, month and year and store in seperate columns.
     date_data = '(?P<fb_day>[^.]+).(?P<fb_month>[^.]+).(?P<fb_year>[^.]+)'
     final_df = pd.concat(
-        [final_df, final_df["fb_date"].str.extract(date_data).astype(int)], axis=1)
-    final_df["fb_year"] = final_df["fb_year"] + 2000  # To four digit integer.
+        [final_df, final_df['fb_date'].str.extract(date_data).astype(int)], axis=1)
+    final_df['fb_year'] = final_df['fb_year'] + 2000  # To four digit integer.
 
     # Save as CSV file.
     final_df.to_csv(
-        ppj("OUT_DATA_FOOTBALL", "games_final.csv"), index=False)
+        ppj('OUT_DATA_FOOTBALL', 'games_final.csv'), index=False)
 
 if __name__ == '__main__':
     main()

@@ -1,4 +1,5 @@
-"""Scrape download urls on election office level using multiprocessing."""
+"""Scrape download URLs on election office level using multiprocessing."""
+
 import itertools
 import pandas as pd
 import multiprocessing as mp
@@ -26,4 +27,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

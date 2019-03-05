@@ -1,4 +1,5 @@
-import tqdm
+"""Scrape game data via multiprocessing and *get_game_data*."""
+
 import os.path
 import pandas as pd
 import multiprocessing as mp
@@ -24,7 +25,7 @@ def mp_scraping(mtchday, game_df):
         dict_list = []
         with mp.Pool() as pool:
             out = pool.map(scrape_game_data, temp_urls)
-            dict_list.extend(out)
+            dict_list.extend(out) # To list.
 
         # Dicts to dataframe and save as CSV.
         df = pd.DataFrame(dict_list)

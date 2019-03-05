@@ -37,6 +37,14 @@ Documentation of the code in *src.data_management.football_data_management.get_g
 .. automodule:: src.data_management.football_data_management.get_game_data
     :members:
 
+Test "get game data"
+===========================
+
+Documentation of the code in *src.data_management.football_data_management.test_get_game_data*, which tests if scraping of game data is working as intended by using pytest.
+
+.. automodule:: src.data_management.football_data_management.test_get_game_data
+    :members:
+
 
 .. _scrape_game_data:
 
@@ -67,6 +75,14 @@ Get player nationality
 Documentation of the code in *src.data_management.football_data_management.get_plyr_nationality*, which scrapes player nationality and age via mutliprocessing from individual player urls returned by *src.data_management.football_data_management.get_game_data*. The resulting dataframe is stored in *bld.out.data.football_files.plyr_nationality.csv*.
 
 .. automodule:: src.data_management.football_data_management.get_plyr_nationality
+    :members:
+
+Test "get player nationality"
+==============================
+
+Documentation of the code in *src.data_management.football_data_management.test_get_plyr_nationality*, which tests if scraping of player nationality is working as intended by using pytest.
+
+.. automodule:: src.data_management.football_data_management.test_get_plyr_nationality
     :members:
 
 

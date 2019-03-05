@@ -27,6 +27,14 @@ Documentation of the code in *src.data_management.election_data_management.get_e
 .. automodule:: src.data_management.election_data_management.get_elec_data
     :members:
 
+Test "get election data"
+===========================
+
+Documentation of the code in *src.data_management.election_data_management.test_get_elec_data*, which tests if scraping of election data is working as intended by using pytest.
+
+.. automodule:: src.data_management.election_data_management.test_get_elec_data
+    :members:
+
 
 .. _scrape_elec_data:
 

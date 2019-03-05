@@ -1,3 +1,5 @@
+"""Get geodata for each home club in dataset."""
+
 import geocoder
 import numpy as np
 import pandas as pd
@@ -49,8 +51,7 @@ def main():
     unique_clubs = unique_home + unique_away  # Combined list.
     unique_clubs = list(set(unique_clubs))[1:]  # Unique intersection.
 
-    unique_clubs = unique_clubs[0:400]  # !!Subset!!
-
+    unique_clubs = unique_clubs[0:150]  # !!Subset!!
 
     # Scraping via multiprocessing.
     dict_list = []

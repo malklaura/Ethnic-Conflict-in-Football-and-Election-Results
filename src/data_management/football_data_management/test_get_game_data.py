@@ -1,3 +1,5 @@
+"""Test game data crawler."""
+
 import pytest
 
 from src.data_management.football_data_management.get_game_data import *

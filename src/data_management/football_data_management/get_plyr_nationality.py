@@ -1,5 +1,7 @@
-import certifi
+"""Crawl player nationality and age."""
+
 import re
+import certifi
 import urllib3
 import numpy as np
 import pandas as pd
@@ -26,7 +28,7 @@ def get_unique_plyrs(game_df):
     unique_plyrs = list(set(unique_plyrs))[1:]
     unique_plyrs = [x for x in unique_plyrs if type(x) is str]
 
-    return unique_plyrs[0:100]
+    return unique_plyrs
 
 
 def get_age_nat(plyr_url):
@@ -36,7 +38,7 @@ def get_age_nat(plyr_url):
     """
 
     plyr_dict = {'url': plyr_url}
-    
+
     try:
         http = urllib3.PoolManager(
             cert_reqs='CERT_REQUIRED',
@@ -65,7 +67,8 @@ def get_age_nat(plyr_url):
             plyr_dict['nat'] = np.nan
     # To ensure that dictionary is appended to dataframe.
     except:
-        pass
+        plyr_dict['age'] = np.nan
+        plyr_dict['nat'] = np.nan
 
     return plyr_dict
 
