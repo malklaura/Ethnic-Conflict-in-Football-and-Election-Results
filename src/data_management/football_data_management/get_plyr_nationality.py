@@ -26,7 +26,7 @@ def get_unique_plyrs(game_df):
     unique_plyrs = list(set(unique_plyrs))[1:]
     unique_plyrs = [x for x in unique_plyrs if type(x) is str]
 
-    return unique_plyrs
+    return unique_plyrs[0:100]
 
 
 def get_age_nat(plyr_url):
@@ -78,7 +78,7 @@ def main():
     # Scraping via multiprocessing.
     dict_list = []
     with mp.Pool() as pool:
-        out = pool.map(get_age_nat, unique_plyrs[0:50])
+        out = pool.map(get_age_nat, unique_plyrs)
         dict_list.extend(out)
 
     plyr_df = pd.DataFrame(dict_list)  # Dicts to df.

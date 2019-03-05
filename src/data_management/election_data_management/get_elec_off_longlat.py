@@ -32,7 +32,7 @@ def get_srch_term_list(elec_df):
     srch_term_list = elec_df["srch_term"].unique().tolist()
     srch_term_list = [x for x in srch_term_list if x is not None]
 
-    return srch_term_list
+    return srch_term_list[0:200]  # !!Subset!!
 
 
 def clean_srch_term(srch_term):

@@ -40,13 +40,17 @@ def get_geodata(home_club):
 
 def main():
     # Open final football file csv.
-    final_df = pd.read_csv(ppj('OUT_DATA_FOOTBALL', 'games_combined.csv'))
+    final_df = pd.read_csv(
+        ppj('OUT_DATA_FOOTBALL', 'games_combined.csv'), low_memory=False)
 
     # Get unique set of clubs for both home and away teams.
     unique_home = final_df['home_club'].unique().tolist()
     unique_away = final_df['away_club'].unique().tolist()
     unique_clubs = unique_home + unique_away  # Combined list.
-    unique_clubs = list(set(unique_clubs))[1:][0:10]  # Unique intersection.
+    unique_clubs = list(set(unique_clubs))[1:]  # Unique intersection.
+
+    unique_clubs = unique_clubs[0:400]  # !!Subset!!
+
 
     # Scraping via multiprocessing.
     dict_list = []
