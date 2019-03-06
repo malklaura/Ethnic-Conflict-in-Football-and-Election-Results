@@ -8,12 +8,12 @@ Summary
 ========
 This project deals with the web scraping of amateur football and election data from Germany. The project is meant to provide the data basis for subsequent analysis of the effect of ethnic conflict in amateur football on subsequent election results. 
 
-In the first step, both election and game data are scraped from `<https://wahlen.votemanager.de/>`_ and `<https://fupa.net/>`_ respectively. In the next step, the datasets are augmented with longitude and latitude data from a google search query. Lastly, both datasets are merged by using time and geodata distance measures. The final dataset in as panel containing each election office (and the corresponding election results) as well as a measure of ethnicity and violence constructed of all football games within a defined geographical and time distance of an election office. Right now the panel covers the state of NRW across the last ten years, although the script can easily be extended to include all German states as described in the *Project Extension* section.
+In the first step, both election and game data are scraped from `<https://wahlen.votemanager.de/>`_ and `<https://fupa.net/>`_ respectively. In the next step, the datasets are augmented with longitude and latitude data from a Google search query. Lastly, both datasets are merged by using time and geodata distance measures. The final dataset in as panel containing each election office (and the corresponding election results) as well as a measure of ethnicity and violence constructed of all football games within a defined geographical and time distance of an election office. Right now the panel covers the state of NRW across the last ten years, although the script can easily be extended to include all German states as described in the *Project Extension* section.
 
 Waf template
 ------------
 
-This project works with the waf environment provided by :cite:`GaudeckerEconProjectTemplates`. To get accustomed with the workflow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_.  All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the language you are using particular language.
+This project works with the waf environment provided by `Gaudecker <https://github.com/hmgaudecker/econ-project-templates/>`_. To get accustomed with the work-flow in the template I refer you to the documentation of the `waf template <https://github.com/hmgaudecker/econ-project-templates/>`_. All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in waf and how to use the auto-generated files in the language you are using particular language.
 
 
 .. _installation:
@@ -39,17 +39,17 @@ Although the script is meant to run in one go, two external requirements are req
 GeckoDriver
 ++++++++++++
 
-In a first step a recent version of the *GeckoDriver*, a WebDriver engine, is required. The scraping of the election data requires a browser automation framework, which is provided by *Selenium Python*, which requires such a WebDriver. The major advantage of using *GeckoDriver* as opposed to the default Firefox driver is the compatibility of *GeckoDriver* with the W3C WebDriver protocol to communicate with Selenium, which is a universally defined standard for WebDrivers. Recent versions of the driver are available on `<https://github.com/mozilla/geckodriver/releases>`_. **After downloading the appropriate version for your operating system, provide the path to the driver in *src.data_management.election_data_management.get_elec_mun.py* line *90***. 
+In a first step a recent version of the *GeckoDriver*, a WebDriver engine, is required. The scraping of the election data requires a browser automation framework, which is provided by *Selenium Python*, which requires such a WebDriver. The major advantage of using *GeckoDriver* as opposed to the default Firefox driver is the compatibility of *GeckoDriver* with the W3C WebDriver protocol to communicate with Selenium, which is a universally defined standard for WebDrivers. Recent versions of the driver are available on `<https://github.com/mozilla/geckodriver/releases>`_. **After downloading the appropriate version for your operating system, provide the path to the driver in src.data_management.election_data_management.get_elec_mun.py line 106**. 
 
 .. literalinclude:: ../../src/data_management/election_data_management/get_elec_mun.py
-    :lines: 88-92
+    :lines: 104-108
 
 There are drivers for all major browsers, for their use see the documentation on `<https://selenium-python.readthedocs.io/installation.html>`_. However, the project is not tested for other WebDrivers.
 
 Google API key
 +++++++++++++++
 
-Further, the collection of longitude and latitude data for the football club and the election office locations requires a *google API KEY*, to use Google services on an automated scale. The key generation requires a google account and a sign up to googles cloud platform https://cloud.google.com/maps-platform/. The provided key allows for free monthly search queries of up to 300.00 USD, which should be more than sufficient for this project. Once your personal key is generated **you need to provide it in *src.data_management.election_data_management.get_elec_off_longlat.py* line *74* and in *src.data_management.football_data_management.get_club_longlat.py* line *17***.
+Further, the collection of longitude and latitude data for the football club and the election office locations requires a *Google API KEY*, to use Google services on an automated scale. The key generation requires a Google account and a sign up to the Google-Cloud platform https://cloud.google.com/maps-platform/. The provided key allows for free monthly search queries of up to 300.00 USD, which should be more than sufficient for this project. Once your personal key is generated **you need to provide it in *src.data_management.election_data_management.get_elec_off_longlat.py* line *91* and in *src.data_management.football_data_management.get_club_longlat.py* line *22***.
 
 Python modules
 ++++++++++++++++

@@ -103,7 +103,7 @@ def run_scraping(driver):
 
 def main():
     # Open Firefox driver and open votemanager site.
-    webdriver_path = r'DRIVER_PATH'  # Provide GeckoDriver executable path!
+    webdriver_path = r'WEBDRIVER_PATH'  # Provide GeckoDriver executable path!
     votemanger_url = 'http://wahlen.votemanager.de'
     driver = load_webdriver(webdriver_path, votemanger_url, 5)
 

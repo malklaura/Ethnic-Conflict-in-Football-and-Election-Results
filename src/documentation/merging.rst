@@ -18,7 +18,8 @@ After the scraping of both election and football data is finished, the latter ar
 	b. games dates no longer back than 14 days from election date
 4. Group remaining observation by election office name and election
 
-The corresponding code can be found in *src.data_management.final_merge.py*. Especially 
+
+The corresponding code can be found in *src.data_management.final_merge.py*. 
 
 .. automodule:: src.data_management.merge_elections_games
     :members: 

@@ -158,7 +158,7 @@ def main():
     main_url = 'https://www.fupa.net'
     # Regions to scrap.
     regions = ['mittelrhein']
-    # regions = ["mittelrhein", "niederrhein", "ruhrgebiet", "westrhein"]
+    # regions = ['mittelrhein', 'niederrhein', 'ruhrgebiet', 'westrhein']
 
     # Intitalize dictionary and pandas dataframe to store league data.
     matchday_dict = dict()

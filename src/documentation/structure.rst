@@ -12,8 +12,8 @@ The logic of this project works according to the following hierarchic structure:
 1. Election data management
     a. Determination of scrapable municipalties
     b. Scrape election information and download url of election results
-    c. Download election .csv files and combine to one .csv file
-    d. Get geodata for each election office in combined .csv file
+    c. Download election CSV files and combine to one CSV file
+    d. Get geodata for each election office in combined CSV file
 2. Football data management
     a. Get data of all leagues present in `<https://fupa.net/>`_
     b. Get dataframe of all game urls within those leagues
@@ -42,9 +42,9 @@ The following is taken from the top-level wscript file. Modify any project-wide 
 As should be evident from the similarity of the names, the paths follow the steps of the analysis in the :file:`src` directory:
 
 1. **data_management** → **OUT_DATA**
-    a. **election_data_management** → **OUT_DATA_ELEC** , **OUT_DATA_ELEC_CSV**
-    b. **football_data_management** → **OUT_DATA_FOOTBALL**
-2. **final** → **OUT_FINAL**, **OUT_FIGURES**
+    a. **election_data_management** → **OUT_DATA_ELEC**, **OUT_DATA_ELEC_CSV**
+    b. **football_data_management** → **OUT_DATA_FOOTBALL**, **OUT_DATA_FOOTBALL_CSV**
+2. **analysis** → **OUT_FIGURES**
 
 These will re-appear in automatically generated header files by calling the ``write_project_paths`` task generator.
 
